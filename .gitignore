@@ -1,0 +1,32 @@
+# General
+.DS_Store
+.env
+*.log
+
+# Java / Spring Boot
+backend/target/
+backend/*.jar
+backend/*.war
+backend/.mvn/
+backend/.idea/
+backend/.eclipse/
+backend/*.iml
+
+# Node / React
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.npm/
+
+# Python / FastAPI
+ml-service/venv/
+ml-service/__pycache__/
+ml-service/*.pyc
+ml-service/.pytest_cache/
+
+# VS Code
+.vscode/
+
+# Ignore downloaded maven package
+maven.zip
+apache-maven-3.9.6/
