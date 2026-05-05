@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Shield, Lock, Mail, Fingerprint, Activity } from 'lucide-react';
+import { Shield, Lock, Mail, Fingerprint, Activity, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function Login() {
@@ -10,6 +10,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [fingerprint, setFingerprint] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,13 +85,28 @@ export default function Login() {
             <div className="relative">
               <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 required
                 className="w-full bg-black/40 border border-white/10 rounded px-10 py-2.5 text-white focus:outline-none focus:border-primary transition-colors"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <button 
+                type="button" 
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 focus:outline-none"
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
+          </div>
+
+          <div className="flex items-center justify-between text-sm">
+            <label className="flex items-center text-gray-400 cursor-pointer">
+              <input type="checkbox" className="mr-2 rounded border-white/10 bg-black/40 text-primary focus:ring-primary focus:ring-offset-background" />
+              Remember me
+            </label>
+            <a href="#" className="text-primary hover:text-primary/80 transition-colors">Forgot password?</a>
           </div>
 
           <button
@@ -100,6 +116,10 @@ export default function Login() {
           >
             {loading ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : 'Secure Login'}
           </button>
+          
+          <div className="text-center mt-4 text-sm text-gray-400">
+            Don't have an account? <a href="#" className="text-primary hover:text-primary/80 font-semibold transition-colors">Request Access</a>
+          </div>
         </form>
 
         {fingerprint && (
