@@ -22,7 +22,7 @@ export default function Sidebar() {
       <div className="p-6 flex items-center space-x-3 mb-2 border-b border-white/5 bg-background/50">
         <Shield className="w-8 h-8 text-primary" />
         <div>
-          <h1 className="text-xl font-bold tracking-wider">ZERO<span className="text-primary">TRUST</span></h1>
+          <h1 className="text-xl font-bold tracking-wider">TRUST<span className="text-primary">WEB</span></h1>
           <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">Enterprise SOC</p>
         </div>
       </div>

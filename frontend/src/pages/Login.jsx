@@ -55,7 +55,7 @@ export default function Login() {
           <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 border border-primary/30">
             <Shield className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-wider">ZERO<span className="text-primary">TRUST</span></h1>
+          <h1 className="text-2xl font-bold text-white tracking-wider">TRUST<span className="text-primary">WEB</span></h1>
           <p className="text-gray-400 text-sm mt-1">Enterprise Security Operations</p>
         </div>
 
