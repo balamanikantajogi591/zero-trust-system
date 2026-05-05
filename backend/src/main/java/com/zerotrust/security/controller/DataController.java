@@ -43,4 +43,19 @@ public class DataController {
 
         return rawData;
     }
+
+    @Autowired
+    private com.zerotrust.security.repository.AuditLogRepository auditLogRepository;
+
+    @GetMapping("/audits")
+    public List<com.zerotrust.security.model.AuditLog> getRecentAudits(Authentication authentication) {
+        boolean isAnalyst = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ANALYST") || a.getAuthority().equals("ROLE_ADMIN"));
+
+        if (!isAnalyst) {
+            return List.of(); // Only Analysts/Admins can see audit logs
+        }
+
+        return auditLogRepository.findTop10ByOrderByTimestampDesc();
+    }
 }

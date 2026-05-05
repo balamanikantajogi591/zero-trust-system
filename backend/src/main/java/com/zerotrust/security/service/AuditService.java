@@ -1,6 +1,7 @@
 package com.zerotrust.security.service;
 
 import com.zerotrust.security.model.AuditLog;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -10,8 +11,8 @@ import java.time.LocalDateTime;
 @Service
 public class AuditService {
 
-    // Usually injected Repository
-    // @Autowired private AuditLogRepository repo;
+    @Autowired
+    private com.zerotrust.security.repository.AuditLogRepository repo;
 
     public void logAction(String username, String action, String details) {
         AuditLog log = new AuditLog();
@@ -24,7 +25,7 @@ public class AuditService {
         String dataToHash = username + action + details + log.getTimestamp().toString();
         log.setHash(generateHash(dataToHash));
 
-        // repo.save(log);
+        repo.save(log);
         System.out.println("Audit Logged: [" + log.getHash() + "] " + username + " performed " + action);
     }
 
