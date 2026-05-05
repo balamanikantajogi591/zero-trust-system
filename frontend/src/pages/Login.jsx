@@ -213,9 +213,9 @@ export default function Login() {
         </form>
 
         <div className="my-6 flex items-center">
-          <div className="flex-grow border-t border-white/10"></div>
+          <div className="grow border-t border-white/10"></div>
           <span className="mx-4 text-xs text-gray-500">OR</span>
-          <div className="flex-grow border-t border-white/10"></div>
+          <div className="grow border-t border-white/10"></div>
         </div>
 
         <button 
