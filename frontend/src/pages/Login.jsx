@@ -22,22 +22,25 @@ export default function Login() {
         failedLogins: 0
       };
 
-      // Since backend is not running, we'll simulate the successful response
-      // In production: const res = await axios.post('http://localhost:8080/api/auth/login', activityData);
+      // Use environment variable or default to local/render backend
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://zero-trust-system-wvxr.onrender.com';
       
-      const simulateAuth = true;
-      if (simulateAuth) {
-        setTimeout(() => {
-          if (username === 'admin' && password === 'password') {
-            localStorage.setItem('token', 'mock_jwt_token_123');
-            navigate('/dashboard');
-          } else {
-            setError('Invalid credentials or access denied by Zero Trust Policy.');
-          }
-        }, 1000);
+      const res = await axios.post(`${apiUrl}/api/auth/login`, activityData);
+      
+      if (res.status === 200 && res.data.token) {
+        localStorage.setItem('token', res.data.token);
+        // If MFA was required based on Risk Score, we could redirect to an MFA page here
+        if (res.data.mfaRequired) {
+          console.warn("MFA Required due to high risk score: " + res.data.riskScore);
+          // For demo, we just alert and let them through, but in prod you'd stop here
+          alert("High Risk Detected! MFA would trigger here. Risk Score: " + res.data.riskScore);
+        }
+        navigate('/dashboard');
+      } else {
+        setError('Invalid credentials or access denied by Zero Trust Policy.');
       }
     } catch (err) {
-      setError('Login failed. Endpoint may be unreachable.');
+      setError(err.response?.data || 'Login failed. Endpoint may be unreachable.');
     }
   };
 
