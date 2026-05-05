@@ -14,7 +14,7 @@ export default function Login() {
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'https://zero-trust-system-wvxr.onrender.com';
+  const apiUrl = import.meta.env.VITE_API_URL || '';
 
   const handleLogin = async (e) => {
     e.preventDefault();
