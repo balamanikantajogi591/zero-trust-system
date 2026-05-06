@@ -25,7 +25,7 @@ public class FirebaseConfig {
             serviceAccount = new ByteArrayInputStream(serviceAccountJson.getBytes());
         } else {
             // Fallback to local file for development
-            serviceAccount = getClass().getClassLoader().getResourceAsStream("com/zerotrust/config/serviceAccountKey.json");
+            serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
             if (serviceAccount == null) {
                 System.err.println("CRITICAL: Firebase Service Account key not found in environment or classpath!");
                 return;

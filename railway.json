@@ -5,6 +5,7 @@
     "sleepOnIdle": false,
     "restartPolicyType": "ON_FAILURE",
     "healthCheckPath": "/",
-    "healthCheckTimeout": 300
+    "healthCheckTimeout": 600,
+    "serviceName": "zero-trust-system"
   }
 }
