@@ -219,6 +219,16 @@ export default function Login() {
               {isRegister ? 'Sign In' : 'Request Credentials'}
             </button>
           </div>
+          
+          <div className="text-center mt-4">
+            <button 
+              type="button"
+              onClick={() => navigate('/')}
+              className="text-gray-500 hover:text-gray-400 text-xs flex items-center justify-center mx-auto transition-colors"
+            >
+              <Shield className="w-3 h-3 mr-1" /> Back to Landing Page
+            </button>
+          </div>
         </form>
 
         {fingerprint && (

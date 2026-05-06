@@ -17,6 +17,8 @@ function App() {
     <Router>
       <div className="min-h-screen bg-background text-white selection:bg-primary/30">
         <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/login" element={<Login />} />
           
           <Route element={<Layout />}>
@@ -30,8 +32,6 @@ function App() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/settings" element={<Settings />} />
           </Route>
-
-          <Route path="/" element={<Home />} />
         </Routes>
       </div>
     </Router>
