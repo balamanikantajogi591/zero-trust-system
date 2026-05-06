@@ -74,12 +74,15 @@ export default function Login() {
   };
 
   const handleGoogleLogin = async () => {
+    const userEmail = prompt("Simulated Google Sign-In: Enter your Gmail address", "user@gmail.com");
+    if (!userEmail) return;
+
     setError('');
     setLoading(true);
     try {
-      // Simulate Google Login
+      // Send the actual entered email to the backend
       const res = await axios.post('/api/auth/google-login', { 
-        email: 'user@gmail.com', 
+        email: userEmail, 
         hourOfDay: new Date().getHours(),
         downloadCount: 0,
         failedLogins: 0
