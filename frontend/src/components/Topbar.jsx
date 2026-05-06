@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, User, Bell } from 'lucide-react';
 
-const Topbar = ({ user }) => {
+const Topbar = ({ user, onLogout }) => {
   return (
     <div className="h-16 bg-card/50 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-8 sticky top-0 z-40 ml-64">
       <div className="relative w-96">
@@ -22,10 +22,16 @@ const Topbar = ({ user }) => {
         <div className="flex items-center gap-3 pl-4 border-l border-white/10">
           <div className="text-right">
             <p className="text-xs font-semibold">{user.role} Portal</p>
-            <p className="text-[10px] text-gray-500">{user.role === 'ADMIN' ? 'Full Access' : 'Read Only'}</p>
+            <p className="text-[10px] text-gray-500 cursor-pointer hover:text-accent transition-colors" onClick={onLogout}>
+              Logout System
+            </p>
           </div>
           <div className="w-9 h-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-            <User className="w-5 h-5 text-primary" />
+            {user.picture ? (
+              <img src={user.picture} alt="Avatar" className="w-full h-full rounded-full object-cover" />
+            ) : (
+              <User className="w-5 h-5 text-primary" />
+            )}
           </div>
         </div>
       </div>

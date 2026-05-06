@@ -49,6 +49,18 @@ const ThreatDetection = () => {
     fetchThreats();
   }, []);
 
+  const handleResolve = async (id) => {
+    try {
+      await eventApi.resolveEvent(id);
+      const response = await eventApi.getEvents();
+      const filtered = response.data.filter(e => (e.severity === 'CRITICAL' || e.severity === 'HIGH') && e.status !== 'RESOLVED');
+      setThreats(filtered);
+      setSelectedThreat(null);
+    } catch (error) {
+      console.error("Failed to resolve threat", error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-gray-500 min-h-[400px]">
@@ -182,7 +194,10 @@ const ThreatDetection = () => {
                       <XCircle className="w-4 h-4" />
                       Block User
                     </button>
-                    <button className="w-full py-3 bg-secondary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-secondary/80 transition-all">
+                    <button 
+                      onClick={() => handleResolve(selectedThreat.id)}
+                      className="w-full py-3 bg-secondary text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-secondary/80 transition-all"
+                    >
                       <CheckCircle className="w-4 h-4" />
                       Mark Resolved
                     </button>

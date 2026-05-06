@@ -74,21 +74,21 @@ const UserManagement = () => {
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`flex items-center gap-1.5 text-xs ${user.status === 'Active' ? 'text-secondary' : 'text-accent'}`}>
-                    {user.status === 'Active' ? <UserCheck className="w-3 h-3" /> : <UserX className="w-3 h-3" />}
-                    {user.status}
+                  <span className={`flex items-center gap-1.5 text-xs ${user.status?.toLowerCase() === 'active' ? 'text-secondary' : 'text-accent'}`}>
+                    {user.status?.toLowerCase() === 'active' ? <UserCheck className="w-3 h-3" /> : <UserX className="w-3 h-3" />}
+                    {user.status || 'Unknown'}
                   </span>
                 </td>
                 <td className="px-6 py-4">
                   <div className="w-24 h-1.5 bg-white/5 rounded-full overflow-hidden">
                     <div 
                       className={`h-full rounded-full ${
-                        user.risk === 'Low' ? 'bg-secondary w-1/4' : 
-                        user.risk === 'Medium' ? 'bg-yellow-500 w-2/4' : 'bg-accent w-3/4'
+                        user.riskScore < 30 ? 'bg-secondary w-1/4' : 
+                        user.riskScore < 70 ? 'bg-yellow-500 w-2/4' : 'bg-accent w-3/4'
                       }`}
                     ></div>
                   </div>
-                  <span className="text-[10px] text-gray-500 mt-1 block">{user.risk} Risk</span>
+                  <span className="text-[10px] text-gray-500 mt-1 block">{user.riskScore}% Risk</span>
                 </td>
                 <td className="px-6 py-4 text-right">
                   <button className="p-2 hover:bg-white/10 rounded-lg transition-all">

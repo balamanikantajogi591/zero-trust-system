@@ -30,15 +30,23 @@ const Placeholder = ({ title }) => (
 );
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem('user');
+    return savedUser ? JSON.parse(savedUser) : null;
+  });
   const [toast, setToast] = useState(null);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    setUser(null);
+  };
 
   useEffect(() => {
     if (user) {
       notificationService.connect();
       notificationService.onMessageReceived((alert) => {
         setToast(alert);
-        // Auto-hide after 5 seconds
         setTimeout(() => setToast(null), 5000);
       });
     }
@@ -95,7 +103,7 @@ function App() {
               <div className="min-h-screen bg-background flex">
                 <Sidebar user={user} />
                 <div className="flex flex-col flex-1">
-                  <Topbar user={user} />
+                  <Topbar user={user} onLogout={handleLogout} />
                   <main className="ml-64 min-h-[calc(100vh-64px)] transition-all">
                     <Routes>
                       <Route path="/dashboard" element={<Dashboard />} />

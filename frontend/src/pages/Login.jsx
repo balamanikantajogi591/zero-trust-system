@@ -13,6 +13,7 @@ const LoginPage = ({ onLoginSuccess }) => {
   const [step, setStep] = useState('login'); // login, register, mfa
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
+  const [loginResponse, setLoginResponse] = useState(null);
 
   const handleToggle = () => {
     setStep(step === 'login' ? 'register' : 'login');
@@ -23,9 +24,9 @@ const LoginPage = ({ onLoginSuccess }) => {
     e.preventDefault();
     try {
       const response = await authApi.login({ email, password });
-      if (response.data.mfaRequired || true) { // Force MFA step for Zero Trust demo
-        setStep('mfa'); 
-      }
+      setLoginResponse(response.data);
+      // For demo purposes, we still force MFA, but now we have the real token
+      setStep('mfa');
       setError('');
     } catch (err) {
       setError('Invalid credentials or access denied by Zero Trust policy.');
@@ -35,10 +36,19 @@ const LoginPage = ({ onLoginSuccess }) => {
   const handleMfa = async (e) => {
     e.preventDefault();
     try {
-      // For demo purposes, we accept 123456 but in production this would verify via backend
       if (otp === '123456') {
         const isAdmin = email === 'balamanikantajogi591@gmail.com';
-        onLoginSuccess({ role: isAdmin ? 'ADMIN' : 'USER', email });
+        const userData = { 
+          role: isAdmin ? 'ADMIN' : 'USER', 
+          email,
+          token: loginResponse?.accessToken 
+        };
+        
+        // Persist to localStorage
+        localStorage.setItem('user', JSON.stringify(userData));
+        localStorage.setItem('token', loginResponse?.accessToken);
+        
+        onLoginSuccess(userData);
       } else {
         setError('Invalid MFA code.');
       }
@@ -180,30 +190,38 @@ const LoginPage = ({ onLoginSuccess }) => {
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-white/5"></div>
               </div>
-              <span className="relative bg-card px-4 text-xs text-gray-500 uppercase font-bold">Or continue with</span>
+              <span className="relative bg-card px-4 text-xs text-gray-500 uppercase font-bold tracking-widest">
+                Secure Federation
+              </span>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center mb-6">
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                   const decoded = jwtDecode(credentialResponse.credential);
                   const isAdmin = decoded.email === 'balamanikantajogi591@gmail.com';
-                  onLoginSuccess({ 
+                  const userData = { 
                     role: isAdmin ? 'ADMIN' : 'USER', 
                     email: decoded.email,
                     name: decoded.name,
-                    picture: decoded.picture 
-                  });
+                    picture: decoded.picture,
+                    token: credentialResponse.credential 
+                  };
+                  localStorage.setItem('user', JSON.stringify(userData));
+                  localStorage.setItem('token', credentialResponse.credential);
+                  onLoginSuccess(userData);
                 }}
                 onError={() => {
                   setError('Google Authentication Failed');
                 }}
                 theme="filled_black"
                 shape="pill"
+                text="continue_with"
+                width="100%"
               />
             </div>
 
-            <p className="text-center mt-6 text-sm text-gray-500">
+            <p className="text-center text-sm text-gray-500">
               {step === 'login' ? "Don't have an account?" : "Already have an account?"}
               <button 
                 onClick={handleToggle}

@@ -2,17 +2,26 @@ package com.zerotrust.config;
 
 import com.zerotrust.model.Role;
 import com.zerotrust.model.User;
+import com.zerotrust.model.SecurityEvent;
+import com.zerotrust.model.AuditLog;
 import com.zerotrust.repository.UserRepository;
+import com.zerotrust.repository.SecurityEventRepository;
+import com.zerotrust.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
+    private final SecurityEventRepository eventRepository;
+    private final AuditLogRepository auditLogRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -26,9 +35,72 @@ public class DataInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode("Mani047@"))
                     .role(Role.ADMIN)
                     .mfaEnabled(true)
+                    .status("Active")
+                    .riskScore(0)
                     .build();
             userRepository.save(admin);
             System.out.println("CRITICAL: ADMIN USER CREATED -> " + adminEmail);
         }
+
+        if (eventRepository.count() == 0) {
+            seedEvents();
+            System.out.println("INFO: MOCK SECURITY EVENTS SEEDED");
+        }
+
+        if (auditLogRepository.count() == 0) {
+            seedAuditLogs();
+            System.out.println("INFO: MOCK AUDIT LOGS SEEDED");
+        }
+    }
+
+    private void seedEvents() {
+        List<SecurityEvent> events = List.of(
+            SecurityEvent.builder()
+                .type("ANOMALY")
+                .severity("CRITICAL")
+                .message("Unauthorized access attempt to Finance DB from unknown IP 192.168.4.12")
+                .userId("guest")
+                .riskScore(95)
+                .status("ACTIVE")
+                .timestamp(LocalDateTime.now().minusHours(2))
+                .build(),
+            SecurityEvent.builder()
+                .type("DATA_ACCESS")
+                .severity("HIGH")
+                .message("Unusual data export detected: 2.5GB downloaded by user ID 407")
+                .userId("407")
+                .riskScore(75)
+                .status("ACTIVE")
+                .timestamp(LocalDateTime.now().minusHours(5))
+                .build(),
+            SecurityEvent.builder()
+                .type("LOGIN")
+                .severity("MEDIUM")
+                .message("Brute force attempt detected on admin account")
+                .userId("admin")
+                .riskScore(45)
+                .status("BLOCKED")
+                .timestamp(LocalDateTime.now().minusDays(1))
+                .build()
+        );
+        eventRepository.saveAll(events);
+    }
+
+    private void seedAuditLogs() {
+        List<AuditLog> logs = List.of(
+            AuditLog.builder()
+                .userId("balamanikantajogi591@gmail.com")
+                .action("USER_LOGIN")
+                .details("Admin login verified via Google OAuth")
+                .timestamp(LocalDateTime.now().minusHours(1))
+                .build(),
+            AuditLog.builder()
+                .userId("balamanikantajogi591@gmail.com")
+                .action("POLICY_UPDATE")
+                .details("Updated DLP masking rules for PII data")
+                .timestamp(LocalDateTime.now().minusHours(3))
+                .build()
+        );
+        auditLogRepository.saveAll(logs);
     }
 }
