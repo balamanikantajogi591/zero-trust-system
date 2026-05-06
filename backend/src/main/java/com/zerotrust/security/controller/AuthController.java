@@ -91,7 +91,7 @@ public class AuthController {
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("password"));
             admin.setRole("ROLE_ADMIN");
-            admin.setEmail("admin@trustweb.local");
+            admin.setEmail("admin@secureweb.local");
             userRepository.save(admin);
             userOpt = Optional.of(admin);
         }

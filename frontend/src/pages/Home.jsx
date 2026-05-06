@@ -25,7 +25,7 @@ export default function Home() {
       <nav className="relative z-50 flex justify-between items-center px-8 py-6 border-b border-white/5 backdrop-blur-md bg-black/20">
         <div className="flex items-center space-x-3">
           <img src={logo} alt="Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" />
-          <span className="text-xl font-bold tracking-tighter">TRUST<span className="text-primary">WEB</span></span>
+          <span className="text-xl font-bold tracking-tighter">SECURE<span className="text-primary">WEB</span></span>
         </div>
         <div className="flex items-center space-x-6">
           <button 
@@ -48,7 +48,7 @@ export default function Home() {
           >
             <div className="relative group">
               <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              <img src={logo} alt="Trust Web Logo" className="relative w-32 h-32 md:w-48 md:h-48 object-contain" />
+              <img src={logo} alt="Secure Web Logo" className="relative w-32 h-32 md:w-48 md:h-48 object-contain" />
             </div>
           </motion.div>
 
@@ -112,7 +112,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="relative z-10 mt-40 border-t border-white/5 py-12 text-center text-gray-500 text-sm">
-        <p>© 2026 TRUST WEB ENTERPRISE. All rights reserved. Secured by AI-X Intelligence.</p>
+        <p>© 2026 SECURE WEB ENTERPRISE. All rights reserved. Secured by AI-X Intelligence.</p>
       </footer>
     </div>
   );

@@ -36,7 +36,7 @@ export default function Sidebar() {
           <img src={logo} alt="Logo" className="w-full h-full object-contain" />
         </div>
         <div>
-          <h1 className="text-xl font-bold tracking-wider">TRUST<span className="text-primary">WEB</span></h1>
+          <h1 className="text-xl font-bold tracking-wider">SECURE<span className="text-primary">WEB</span></h1>
           <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">Enterprise SOC</p>
         </div>
       </div>

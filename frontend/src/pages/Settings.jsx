@@ -25,7 +25,7 @@ export default function Settings() {
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Account Settings</h1>
-        <p className="text-gray-400">Manage your Trust Web profile and security preferences.</p>
+        <p className="text-gray-400">Manage your Secure Web profile and security preferences.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -70,7 +70,7 @@ export default function Settings() {
                   <div className="bg-black/40 border border-white/10 rounded-l px-4 py-2 flex items-center justify-center text-gray-400">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <input type="text" disabled value="admin@trustweb.local" className="flex-1 bg-black/40 border-y border-r border-white/10 rounded-r px-4 py-2 text-gray-300 focus:outline-none" />
+                  <input type="text" disabled value="admin@secureweb.local" className="flex-1 bg-black/40 border-y border-r border-white/10 rounded-r px-4 py-2 text-gray-300 focus:outline-none" />
                 </div>
               </div>
               
