@@ -17,7 +17,6 @@ export default function Login() {
   const [mfaRequired, setMfaRequired] = useState(false);
   const [otp, setOtp] = useState('');
   const [tempToken, setTempToken] = useState(null);
-  const [loginType, setLoginType] = useState('user'); // 'user' or 'admin'
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -125,35 +124,18 @@ export default function Login() {
 
         <div className="flex bg-black/40 p-1 rounded-lg mb-6 border border-white/5">
           <button 
-            onClick={() => { setLoginType('user'); setIsRegister(false); }}
-            className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${loginType === 'user' ? 'bg-white/10 text-white border border-white/20' : 'text-gray-500 hover:text-gray-300'}`}
+            onClick={() => setIsRegister(false)}
+            className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${!isRegister ? 'bg-primary text-black' : 'text-gray-500 hover:text-gray-300'}`}
           >
-            User Access
+            Login
           </button>
           <button 
-            onClick={() => { setLoginType('admin'); setIsRegister(false); }}
-            className={`flex-1 py-2 text-xs font-bold rounded-md transition-all ${loginType === 'admin' ? 'bg-primary/20 text-primary border border-primary/30' : 'text-gray-500 hover:text-gray-300'}`}
+            onClick={() => setIsRegister(true)}
+            className={`flex-1 py-2 text-sm font-bold rounded-md transition-all ${isRegister ? 'bg-primary text-black' : 'text-gray-500 hover:text-gray-300'}`}
           >
-            SOC Administrator
+            Register
           </button>
         </div>
-
-        {loginType === 'user' && (
-          <div className="flex bg-black/20 p-1 rounded-lg mb-6 border border-white/5">
-            <button 
-              onClick={() => setIsRegister(false)}
-              className={`flex-1 py-1.5 text-[10px] font-bold rounded-md transition-all ${!isRegister ? 'bg-primary text-black' : 'text-gray-500 hover:text-gray-300'}`}
-            >
-              Sign In
-            </button>
-            <button 
-              onClick={() => setIsRegister(true)}
-              className={`flex-1 py-1.5 text-[10px] font-bold rounded-md transition-all ${isRegister ? 'bg-primary text-black' : 'text-gray-500 hover:text-gray-300'}`}
-            >
-              Register
-            </button>
-          </div>
-        )}
 
         {error && (
           <div className={`p-3 rounded mb-6 text-sm text-center border ${error.includes('successful') ? 'bg-green-500/10 border-green-500/50 text-green-500' : 'bg-red-500/10 border-red-500/50 text-red-500'}`}>
@@ -184,53 +166,24 @@ export default function Login() {
             >
               Verify & Authorize
             </button>
-          </form>
-        ) : loginType === 'admin' ? (
-          <div className="space-y-6 py-4">
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 text-center">
-              <Shield className="w-10 h-10 text-primary mx-auto mb-3 animate-pulse" />
-              <h2 className="text-white font-bold text-lg mb-1">Administrative Access</h2>
-              <p className="text-gray-400 text-xs px-4">
-                This portal is strictly reserved for authorized SOC personnel. MFA is required for all sessions.
-              </p>
-            </div>
-            
-            <button
+            <button 
               type="button"
-              onClick={handleGoogleLogin}
-              disabled={loading}
-              className="w-full py-3 bg-white text-black font-extrabold rounded hover:bg-gray-100 transition-all flex justify-center items-center space-x-3 shadow-[0_0_25px_rgba(255,255,255,0.2)] transform active:scale-95"
+              onClick={() => setMfaRequired(false)}
+              className="w-full text-xs text-gray-500 hover:text-gray-400 transition-colors mt-2"
             >
-              <svg className="w-6 h-6" viewBox="0 0 24 24">
-                <path fill="#4A90E2" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                <path fill="#2ECC71" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                <path fill="#F1C40F" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                <path fill="#E74C3C" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-              </svg>
-              <span>ADMIN SECURE LOGIN</span>
+              Cancel
             </button>
-
-            <div className="text-center">
-              <button 
-                type="button"
-                onClick={() => navigate('/')}
-                className="text-gray-500 hover:text-gray-400 text-[10px] flex items-center justify-center mx-auto transition-colors"
-              >
-                <Shield className="w-3 h-3 mr-1" /> Return to Public Node
-              </button>
-            </div>
-          </div>
+          </form>
         ) : (
           <form onSubmit={handleAuth} className="space-y-5">
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Corporate Identity</label>
+            <label className="block text-sm text-gray-400 mb-1">Email or Username</label>
             <div className="relative">
               <Mail className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input
                 type="text"
                 required
-                placeholder="email@secureweb.local"
-                className="w-full bg-black/40 border border-white/10 rounded px-10 py-2.5 text-white focus:outline-none focus:border-primary transition-colors text-sm"
+                className="w-full bg-black/40 border border-white/10 rounded px-10 py-2.5 text-white focus:outline-none focus:border-primary transition-colors"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -238,14 +191,13 @@ export default function Login() {
           </div>
 
           <div>
-            <label className="block text-xs text-gray-500 mb-1">Credentials</label>
+            <label className="block text-sm text-gray-400 mb-1">Password</label>
             <div className="relative">
               <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               <input
                 type={showPassword ? "text" : "password"}
                 required
-                placeholder="••••••••"
-                className="w-full bg-black/40 border border-white/10 rounded px-10 py-2.5 text-white focus:outline-none focus:border-primary transition-colors text-sm"
+                className="w-full bg-black/40 border border-white/10 rounded px-10 py-2.5 text-white focus:outline-none focus:border-primary transition-colors"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -261,14 +213,13 @@ export default function Login() {
 
           {isRegister && (
             <div>
-              <label className="block text-xs text-gray-500 mb-1">Confirm Credentials</label>
+              <label className="block text-sm text-gray-400 mb-1">Confirm Password</label>
               <div className="relative">
                 <Lock className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
                 <input
                   type={showPassword ? "text" : "password"}
                   required
-                  placeholder="••••••••"
-                  className="w-full bg-black/40 border border-white/10 rounded px-10 py-2.5 text-white focus:outline-none focus:border-primary transition-colors text-sm"
+                  className="w-full bg-black/40 border border-white/10 rounded px-10 py-2.5 text-white focus:outline-none focus:border-primary transition-colors"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
@@ -277,12 +228,12 @@ export default function Login() {
           )}
 
           {!isRegister && (
-            <div className="flex items-center justify-between text-[10px]">
-              <label className="flex items-center text-gray-500 cursor-pointer">
+            <div className="flex items-center justify-between text-sm">
+              <label className="flex items-center text-gray-400 cursor-pointer">
                 <input type="checkbox" className="mr-2 rounded border-white/10 bg-black/40 text-primary focus:ring-primary focus:ring-offset-background" />
-                Keep session alive
+                Remember me
               </label>
-              <a href="#" className="text-primary hover:text-primary/80 transition-colors">Recover Password</a>
+              <a href="#" className="text-primary hover:text-primary/80 transition-colors">Forgot password?</a>
             </div>
           )}
 
@@ -291,15 +242,15 @@ export default function Login() {
             disabled={loading}
             className="w-full py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors flex justify-center items-center shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]"
           >
-            {loading ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : (isRegister ? 'PROVISION ACCOUNT' : 'ESTABLISH LINK')}
+            {loading ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div> : (isRegister ? 'Create Account' : 'Secure Login')}
           </button>
           
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-white/10"></div>
             </div>
-            <div className="relative flex justify-center text-[10px] uppercase">
-              <span className="bg-[#1a1a24] px-2 text-gray-600 font-bold">Federated Access</span>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-[#1a1a24] px-2 text-gray-500">Or continue with</span>
             </div>
           </div>
 
@@ -315,16 +266,27 @@ export default function Login() {
               <path fill="#F1C40F" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
               <path fill="#E74C3C" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
             </svg>
-            <span className="font-bold text-sm">Join via Google</span>
+            <span className="font-bold">Login with Google</span>
           </button>
+          
+          <div className="text-center mt-6 text-sm text-gray-500">
+            {isRegister ? "Already have an account?" : "Need enterprise access?"}{' '}
+            <button 
+              type="button"
+              onClick={() => setIsRegister(!isRegister)}
+              className="text-primary hover:text-primary/80 font-bold transition-colors"
+            >
+              {isRegister ? 'Sign In' : 'Request Credentials'}
+            </button>
+          </div>
           
           <div className="text-center mt-4">
             <button 
               type="button"
               onClick={() => navigate('/')}
-              className="text-gray-500 hover:text-gray-400 text-[10px] flex items-center justify-center mx-auto transition-colors"
+              className="text-gray-500 hover:text-gray-400 text-xs flex items-center justify-center mx-auto transition-colors"
             >
-              <Shield className="w-3 h-3 mr-1" /> External Node Access
+              <Shield className="w-3 h-3 mr-1" /> Back to Landing Page
             </button>
           </div>
         </form>

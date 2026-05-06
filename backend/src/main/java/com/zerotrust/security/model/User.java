@@ -22,11 +22,15 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String role; // e.g., ROLE_USER, ROLE_ADMIN, ROLE_ANALYST
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private java.util.Set<Role> roles = new java.util.HashSet<>();
 
     private boolean mfaEnabled = true;
 
-    // For simplicity, a mock secret or email could go here
     private String email;
 }
