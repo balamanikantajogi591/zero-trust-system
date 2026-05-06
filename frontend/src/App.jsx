@@ -1,4 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import axios from 'axios';
+
+axios.defaults.baseURL = window.location.origin;
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
@@ -13,6 +17,31 @@ import Analytics from './pages/Analytics';
 import Layout from './components/Layout';
 
 function App() {
+  // Session Timeout Logic (15 minutes of inactivity)
+  useEffect(() => {
+    let timeout;
+    const resetTimeout = () => {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        const token = localStorage.getItem('token');
+        if (token) {
+          localStorage.removeItem('token');
+          window.location.href = '/login?timeout=true';
+        }
+      }, 15 * 60 * 1000); // 15 mins
+    };
+
+    window.addEventListener('mousemove', resetTimeout);
+    window.addEventListener('keydown', resetTimeout);
+    resetTimeout();
+
+    return () => {
+      window.removeEventListener('mousemove', resetTimeout);
+      window.removeEventListener('keydown', resetTimeout);
+      if (timeout) clearTimeout(timeout);
+    };
+  }, []);
+
   return (
     <Router>
       <div className="min-h-screen bg-background text-white selection:bg-primary/30">

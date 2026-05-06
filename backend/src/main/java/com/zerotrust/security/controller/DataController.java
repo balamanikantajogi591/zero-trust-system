@@ -30,11 +30,11 @@ public class DataController {
             "Customer 2: Phone 555-123-4567, Email jane.smith@company.org"
         );
 
-        // Apply DLP masking based on user role
-        boolean isAnalyst = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ANALYST"));
+        // Apply DLP masking based on user role (Admin and Analyst can see raw data)
+        boolean hasClearance = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ANALYST") || a.getAuthority().equals("ROLE_ADMIN"));
 
-        if (!isAnalyst) {
+        if (!hasClearance) {
             // Mask data for non-analysts
             return rawData.stream()
                     .map(dlpService::maskSensitiveData)

@@ -14,6 +14,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [fingerprint, setFingerprint] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [tempToken, setTempToken] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -44,13 +47,29 @@ export default function Login() {
         setError('Registration successful! Please login.');
       } else {
         const res = await axios.post('/api/auth/login', { username: email.split('@')[0], email, password });
-        localStorage.setItem('token', res.data.token);
-        navigate('/dashboard');
+        if (res.data.mfaRequired) {
+          setMfaRequired(true);
+          setTempToken(res.data.token);
+          setError('MFA Verification Required. Check your secure authenticator.');
+        } else {
+          localStorage.setItem('token', res.data.token);
+          navigate('/dashboard');
+        }
       }
     } catch (err) {
       setError(err.response?.data || 'Authentication failed');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleMfaVerify = (e) => {
+    e.preventDefault();
+    if (otp === '123456') { // Simulated OTP verification
+      localStorage.setItem('token', tempToken);
+      navigate('/dashboard');
+    } else {
+      setError('Invalid security code');
     }
   };
 
@@ -65,8 +84,14 @@ export default function Login() {
         downloadCount: 0,
         failedLogins: 0
       });
-      localStorage.setItem('token', res.data.token);
-      navigate('/dashboard');
+      if (res.data.mfaRequired) {
+        setMfaRequired(true);
+        setTempToken(res.data.token);
+        setError('MFA Verification Required for Admin account.');
+      } else {
+        localStorage.setItem('token', res.data.token);
+        navigate('/dashboard');
+      }
     } catch (err) {
       setError('Google authentication failed');
     } finally {
@@ -115,7 +140,39 @@ export default function Login() {
           </div>
         )}
 
-        <form onSubmit={handleAuth} className="space-y-5">
+        {mfaRequired ? (
+          <form onSubmit={handleMfaVerify} className="space-y-5">
+            <div className="text-center mb-6">
+              <p className="text-gray-400 text-xs">Enter the 6-digit code from your Secure Web app.</p>
+            </div>
+            <div className="relative">
+              <Fingerprint className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-primary" />
+              <input
+                type="text"
+                maxLength="6"
+                placeholder="000000"
+                className="w-full bg-black/40 border border-white/10 rounded px-10 py-3 text-center text-2xl tracking-[0.5em] text-white focus:outline-none focus:border-primary transition-colors font-mono"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)]"
+            >
+              Verify & Authorize
+            </button>
+            <button 
+              type="button"
+              onClick={() => setMfaRequired(false)}
+              className="w-full text-xs text-gray-500 hover:text-gray-400 transition-colors mt-2"
+            >
+              Cancel
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={handleAuth} className="space-y-5">
           <div>
             <label className="block text-sm text-gray-400 mb-1">Email or Username</label>
             <div className="relative">
@@ -230,6 +287,7 @@ export default function Login() {
             </button>
           </div>
         </form>
+        )}
 
         {fingerprint && (
           <div className="mt-8 pt-6 border-t border-white/5">

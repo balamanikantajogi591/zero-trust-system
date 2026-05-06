@@ -40,7 +40,11 @@ public class SecurityConfig {
                 conf.setAllowedHeaders(List.of("*"));
                 return conf;
             }))
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .invalidSessionUrl("/login")
+                .maximumSessions(1)
+            )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()

@@ -134,6 +134,12 @@ public class AuthController {
         }
 
         AuthResponse response = new AuthResponse(null, user.getUsername(), 0, false);
+        
+        // MFA Enforcement: If it's a sensitive user (like admin), always require MFA
+        if ("ROLE_ADMIN".equals(user.getRole())) {
+            response.setMfaRequired(true);
+        }
+        
         checkRiskScore(user.getUsername(), request.getHourOfDay(), request.getDownloadCount(), request.getFailedLogins(), response);
 
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
