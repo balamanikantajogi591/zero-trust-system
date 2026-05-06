@@ -12,7 +12,7 @@ public class UserController {
     @GetMapping
     public List<Map<String, Object>> getAllUsers() {
         return List.of(
-            Map.of("id", 1, "username", "admin", "email", "admin@secureweb.local", "role", "ROLE_ADMIN", "status", "Active", "mfaEnabled", true),
+            Map.of("id", 1, "username", "admin", "email", "balamanikantajogi591@gmail.com", "role", "ROLE_ADMIN", "status", "Active", "mfaEnabled", true),
             Map.of("id", 2, "username", "jdoe", "email", "jdoe@company.org", "role", "ROLE_ANALYST", "status", "Active", "mfaEnabled", true),
             Map.of("id", 3, "username", "bsmith", "email", "bsmith@example.com", "role", "ROLE_USER", "status", "Inactive", "mfaEnabled", false)
         );

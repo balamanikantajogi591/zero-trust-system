@@ -70,7 +70,7 @@ export default function Settings() {
                   <div className="bg-black/40 border border-white/10 rounded-l px-4 py-2 flex items-center justify-center text-gray-400">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <input type="text" disabled value="admin@secureweb.local" className="flex-1 bg-black/40 border-y border-r border-white/10 rounded-r px-4 py-2 text-gray-300 focus:outline-none" />
+                  <input type="text" disabled value="balamanikantajogi591@gmail.com" className="flex-1 bg-black/40 border-y border-r border-white/10 rounded-r px-4 py-2 text-gray-300 focus:outline-none" />
                 </div>
               </div>
               

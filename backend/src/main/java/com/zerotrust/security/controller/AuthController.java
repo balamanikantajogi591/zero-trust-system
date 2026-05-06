@@ -74,7 +74,13 @@ public class AuthController {
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole("ROLE_USER");
+        
+        if ("balamanikantajogi591@gmail.com".equalsIgnoreCase(request.getEmail())) {
+            user.setRole("ROLE_ADMIN");
+        } else {
+            user.setRole("ROLE_USER");
+        }
+        
         user.setMfaEnabled(true);
         userRepository.save(user);
 
@@ -91,7 +97,7 @@ public class AuthController {
             admin.setUsername("admin");
             admin.setPassword(passwordEncoder.encode("password"));
             admin.setRole("ROLE_ADMIN");
-            admin.setEmail("admin@secureweb.local");
+            admin.setEmail("balamanikantajogi591@gmail.com");
             userRepository.save(admin);
             userOpt = Optional.of(admin);
         }
@@ -125,7 +131,13 @@ public class AuthController {
             user.setEmail(email);
             // Generate a random password since they login via Google
             user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
-            user.setRole("ROLE_USER");
+            
+            if ("balamanikantajogi591@gmail.com".equalsIgnoreCase(email)) {
+                user.setRole("ROLE_ADMIN");
+            } else {
+                user.setRole("ROLE_USER");
+            }
+            
             user.setMfaEnabled(true);
             userRepository.save(user);
         } else {
