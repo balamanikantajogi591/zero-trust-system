@@ -91,17 +91,6 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody AuthRequest request) {
         Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
         
-        // Fallback for hardcoded admin if DB is empty to prevent lockouts during testing
-        if (userOpt.isEmpty() && "admin".equals(request.getUsername()) && "password".equals(request.getPassword())) {
-            User admin = new User();
-            admin.setUsername("admin");
-            admin.setPassword(passwordEncoder.encode("password"));
-            admin.setRole("ROLE_ADMIN");
-            admin.setEmail("balamanikantajogi591@gmail.com");
-            userRepository.save(admin);
-            userOpt = Optional.of(admin);
-        }
-
         if (userOpt.isPresent() && passwordEncoder.matches(request.getPassword(), userOpt.get().getPassword())) {
             AuthResponse response = new AuthResponse(null, request.getUsername(), 0, false);
             checkRiskScore(request.getUsername(), request.getHourOfDay(), request.getDownloadCount(), request.getFailedLogins(), response);
