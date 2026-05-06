@@ -37,7 +37,7 @@ export default function Sidebar() {
         </div>
         <div>
           <h1 className="text-xl font-bold tracking-wider">SECURE<span className="text-primary">WEB</span></h1>
-          <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">Enterprise SOC</p>
+          <p className="text-[10px] text-gray-500 uppercase tracking-widest mt-0.5">Enterprise Security</p>
         </div>
       </div>
       
