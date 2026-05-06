@@ -88,64 +88,38 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request) {
-        Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
-        
-        if (userOpt.isPresent() && passwordEncoder.matches(request.getPassword(), userOpt.get().getPassword())) {
-            AuthResponse response = new AuthResponse(null, request.getUsername(), 0, false);
-            checkRiskScore(request.getUsername(), request.getHourOfDay(), request.getDownloadCount(), request.getFailedLogins(), response);
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
+        try {
+            User user = userRepository.findByEmail(authRequest.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Invalid credentials"));
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    request.getUsername(), null, List.of(new SimpleGrantedAuthority(userOpt.get().getRole())));
-            response.setToken(jwtTokenProvider.generateToken(auth));
+            if (!passwordEncoder.matches(authRequest.getPassword(), user.getPassword())) {
+                throw new RuntimeException("Invalid credentials");
+            }
 
-            return ResponseEntity.ok(response);
+            // In a real app, generate a real JWT here
+            String token = "mock-jwt-token-" + System.currentTimeMillis();
+            
+            return ResponseEntity.ok(Map.of(
+                "token", token,
+                "role", user.getRole(),
+                "email", user.getEmail()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body(Map.of("message", "Invalid credentials"));
         }
-
-        return ResponseEntity.status(401).body("Invalid credentials");
     }
 
-    @PostMapping("/google-login")
-    public ResponseEntity<?> googleLogin(@RequestBody GoogleLoginRequest request) {
-        // Here we would normally verify the Google ID token using Google API Client.
-        // For demonstration, we trust the simulated token payload from the frontend.
-        String email = request.getEmail();
-        String username = email.split("@")[0]; // Generate a simple username
-
-        Optional<User> userOpt = userRepository.findByEmail(email);
-        User user;
-        if (userOpt.isEmpty()) {
-            user = new User();
-            user.setUsername(username);
-            user.setEmail(email);
-            // Generate a random password since they login via Google
-            user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
-            
-            if ("balamanikantajogi591@gmail.com".equalsIgnoreCase(email)) {
-                user.setRole("ROLE_ADMIN");
-            } else {
-                user.setRole("ROLE_USER");
-            }
-            
-            user.setMfaEnabled(true);
-            userRepository.save(user);
-        } else {
-            user = userOpt.get();
-        }
-
-        AuthResponse response = new AuthResponse(null, user.getUsername(), 0, false);
-        
-        // MFA Enforcement: If it's a sensitive user (like admin), always require MFA
-        if ("ROLE_ADMIN".equals(user.getRole())) {
-            response.setMfaRequired(true);
-        }
-        
-        checkRiskScore(user.getUsername(), request.getHourOfDay(), request.getDownloadCount(), request.getFailedLogins(), response);
-
-        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), null, List.of(new SimpleGrantedAuthority(user.getRole())));
-        response.setToken(jwtTokenProvider.generateToken(auth));
-
-        return ResponseEntity.ok(response);
+    @GetMapping("/risk-score")
+    public ResponseEntity<?> getRiskScore(@RequestParam String email) {
+        // Simulated ML logic: Return high risk for certain domains or patterns
+        int score = (email.contains("test") || email.length() > 25) ? 85 : 12;
+        String level = score > 50 ? "High" : "Low";
+        return ResponseEntity.ok(Map.of(
+            "email", email,
+            "riskScore", score,
+            "trustLevel", level,
+            "recommendation", level.equals("High") ? "Require MFA" : "Allow Direct Access"
+        ));
     }
 }
