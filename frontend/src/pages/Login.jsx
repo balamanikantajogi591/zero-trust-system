@@ -6,30 +6,37 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 
 const LoginPage = ({ onLoginSuccess }) => {
+  const [activeTab, setActiveTab] = useState('login'); // login, register
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstname, setFirstname] = useState('');
   const [lastname, setLastname] = useState('');
-  const [step, setStep] = useState('login'); // login, register, mfa
+  const [step, setStep] = useState('auth'); // auth, mfa
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [loginResponse, setLoginResponse] = useState(null);
-
-  const handleToggle = () => {
-    setStep(step === 'login' ? 'register' : 'login');
-    setError('');
-  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
       const response = await authApi.login({ email, password });
       setLoginResponse(response.data);
-      // For demo purposes, we still force MFA, but now we have the real token
       setStep('mfa');
       setError('');
     } catch (err) {
       setError('Invalid credentials or access denied by Zero Trust policy.');
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      await authApi.register({ email, password, firstname, lastname });
+      setActiveTab('login');
+      setError('');
+      // Show success toast or message? For now just switch to login
+    } catch (err) {
+      setError('Registration failed. Please try again.');
     }
   };
 
@@ -43,11 +50,8 @@ const LoginPage = ({ onLoginSuccess }) => {
           email,
           token: loginResponse?.accessToken 
         };
-        
-        // Persist to localStorage
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('token', loginResponse?.accessToken);
-        
         onLoginSuccess(userData);
       } else {
         setError('Invalid MFA code.');
@@ -72,9 +76,26 @@ const LoginPage = ({ onLoginSuccess }) => {
           <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20">
             <ShieldCheck className="w-10 h-10 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold">Zero Trust Access</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Zero Trust Access</h1>
           <p className="text-gray-500 text-sm">Identity & Device Verification Required</p>
         </div>
+
+        {step === 'auth' && (
+          <div className="flex bg-white/5 p-1 rounded-2xl mb-8 border border-white/5">
+            <button 
+              onClick={() => setActiveTab('login')}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'login' ? 'bg-primary text-white shadow-glow' : 'text-gray-500 hover:text-gray-300'}`}
+            >
+              Login
+            </button>
+            <button 
+              onClick={() => setActiveTab('register')}
+              className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-all ${activeTab === 'register' ? 'bg-primary text-white shadow-glow' : 'text-gray-500 hover:text-gray-300'}`}
+            >
+              Register
+            </button>
+          </div>
+        )}
 
         {error && (
           <div className="bg-accent/10 border border-accent/20 text-accent text-xs p-3 rounded-xl mb-6">
@@ -112,16 +133,16 @@ const LoginPage = ({ onLoginSuccess }) => {
             </button>
             <button 
               type="button"
-              onClick={() => setStep('login')}
+              onClick={() => setStep('auth')}
               className="w-full text-xs text-gray-500 hover:text-white transition-all mt-2"
             >
-              Back to Login
+              Back to {activeTab === 'login' ? 'Login' : 'Register'}
             </button>
           </form>
         ) : (
           <>
-            <form onSubmit={handleLogin} className="space-y-4">
-              {step === 'register' && (
+            <form onSubmit={activeTab === 'login' ? handleLogin : handleRegister} className="space-y-4">
+              {activeTab === 'register' && (
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs font-semibold text-gray-400 uppercase ml-1">First Name</label>
@@ -182,20 +203,11 @@ const LoginPage = ({ onLoginSuccess }) => {
                 type="submit"
                 className="w-full bg-primary hover:bg-primary/80 py-3 rounded-xl font-bold transition-all mt-4 shadow-glow"
               >
-                {step === 'login' ? 'Verify Identity' : 'Create Account'}
+                {activeTab === 'login' ? 'Verify Identity' : 'Create Secure Account'}
               </button>
             </form>
 
-            <div className="relative my-8 text-center">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-white/5"></div>
-              </div>
-              <span className="relative bg-card px-4 text-xs text-gray-500 uppercase font-bold tracking-widest">
-                Secure Federation
-              </span>
-            </div>
-
-            <div className="flex justify-center mb-6">
+            <div className="my-6">
               <GoogleLogin
                 onSuccess={async (credentialResponse) => {
                   const decoded = jwtDecode(credentialResponse.credential);
@@ -220,16 +232,6 @@ const LoginPage = ({ onLoginSuccess }) => {
                 width="100%"
               />
             </div>
-
-            <p className="text-center text-sm text-gray-500">
-              {step === 'login' ? "Don't have an account?" : "Already have an account?"}
-              <button 
-                onClick={handleToggle}
-                className="text-primary hover:underline ml-2 font-semibold"
-              >
-                {step === 'login' ? 'Register Now' : 'Log In'}
-              </button>
-            </p>
           </>
         )}
 
