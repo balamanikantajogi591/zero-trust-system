@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const API_BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:8080/api/v1' 
-  : 'https://secure-web-backend-production.up.railway.app/api/v1';
+  : '/api/v1';
 
 const api = axios.create({
   baseURL: API_BASE_URL,

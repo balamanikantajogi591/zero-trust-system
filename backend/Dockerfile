@@ -1,13 +1,17 @@
 # Build stage
 FROM maven:3.9.5-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
+
+# Copy the entire monorepo
+COPY . .
+
+# Build the backend (which also builds the frontend via plugin)
+WORKDIR /app/backend
 RUN mvn clean package -DskipTests
 
 # Run stage
 FROM eclipse-temurin:17-jre-focal
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/backend/target/*.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

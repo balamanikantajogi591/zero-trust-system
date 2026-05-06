@@ -10,7 +10,7 @@ class NotificationService {
     connect() {
         const backendUrl = window.location.hostname === 'localhost' 
             ? 'http://localhost:8080' 
-            : 'https://secure-web-backend-production.up.railway.app';
+            : window.location.origin;
         const socket = new SockJS(`${backendUrl}/ws`);
         this.stompClient = Stomp.over(socket);
         this.stompClient.debug = null; // Disable debug logging for production
