@@ -30,12 +30,7 @@ export default function Home() {
           <span className="text-xl font-bold tracking-tighter">SECURE<span className="text-primary">WEB</span></span>
         </div>
         <div className="flex items-center space-x-6">
-          <button 
-            onClick={() => navigate('/login')}
-            className="px-6 py-2 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-all transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(var(--primary-rgb),0.3)]"
-          >
-            Access Gateway
-          </button>
+          {/* Access Gateway button removed as requested */}
         </div>
       </nav>
 
