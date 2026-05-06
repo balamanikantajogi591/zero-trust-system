@@ -24,7 +24,9 @@ export default function Home() {
       {/* Navigation */}
       <nav className="relative z-50 flex justify-between items-center px-8 py-6 border-b border-white/5 backdrop-blur-md bg-black/20">
         <div className="flex items-center space-x-3">
-          <img src={logo} alt="Logo" className="w-10 h-10 object-contain drop-shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" />
+          <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20">
+            <Shield className="w-6 h-6 text-primary" />
+          </div>
           <span className="text-xl font-bold tracking-tighter">SECURE<span className="text-primary">WEB</span></span>
         </div>
         <div className="flex items-center space-x-6">
@@ -47,8 +49,10 @@ export default function Home() {
             className="mb-8 flex justify-center"
           >
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-primary to-accent rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
-              <img src={logo} alt="Secure Web Logo" className="relative w-32 h-32 md:w-48 md:h-48 object-contain" />
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary to-accent rounded-full blur-2xl opacity-10 group-hover:opacity-20 transition duration-1000 group-hover:duration-200"></div>
+              <div className="relative w-32 h-32 md:w-48 md:h-48 bg-black/40 rounded-3xl border border-white/10 backdrop-blur-xl flex items-center justify-center shadow-2xl">
+                <Shield className="w-20 h-20 md:w-32 md:h-32 text-primary drop-shadow-[0_0_15px_rgba(var(--primary-rgb),0.4)]" />
+              </div>
             </div>
           </motion.div>
 

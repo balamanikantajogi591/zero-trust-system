@@ -32,8 +32,8 @@ export default function Sidebar() {
   return (
     <div className="w-64 min-h-screen bg-[#1a1a24] border-r border-white/5 flex flex-col fixed left-0 top-0 z-50">
       <div className="p-6 flex items-center space-x-3 mb-2 border-b border-white/5 bg-background/50 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => navigate('/')}>
-        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20 p-1.5">
-          <img src={logo} alt="Logo" className="w-full h-full object-contain" />
+        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center border border-primary/20">
+          <Shield className="w-6 h-6 text-primary" />
         </div>
         <div>
           <h1 className="text-xl font-bold tracking-wider">SECURE<span className="text-primary">WEB</span></h1>
