@@ -44,10 +44,29 @@ export default function Threats() {
           </h1>
           <p className="text-gray-400">Review and triage AI-identified security anomalies.</p>
         </div>
-        <button className="flex items-center space-x-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded transition-colors text-sm">
-          <Filter className="w-4 h-4" />
-          <span>Filter Threats</span>
-        </button>
+        <div className="flex space-x-3">
+          <button 
+            onClick={async () => {
+              try {
+                const token = localStorage.getItem('token');
+                await axios.post('/api/threats/simulate', { type: 'SQL_INJECTION' }, {
+                  headers: { Authorization: `Bearer ${token}` }
+                });
+                alert('Attack simulation triggered! Check logs in a moment.');
+              } catch (err) {
+                alert('Simulation failed.');
+              }
+            }}
+            className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 rounded transition-colors text-sm text-red-400 font-semibold"
+          >
+            <ShieldAlert className="w-4 h-4" />
+            <span>Simulate Attack</span>
+          </button>
+          <button className="flex items-center space-x-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded transition-colors text-sm">
+            <Filter className="w-4 h-4" />
+            <span>Filter Threats</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">

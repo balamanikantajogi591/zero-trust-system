@@ -6,8 +6,6 @@ import com.zerotrust.security.dto.RegisterRequest;
 import com.zerotrust.security.dto.GoogleLoginRequest;
 import com.zerotrust.security.model.User;
 import com.zerotrust.security.repository.UserRepository;
-import com.zerotrust.security.repository.RoleRepository;
-import com.zerotrust.security.model.Role;
 import com.zerotrust.security.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +18,6 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.Collections;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,9 +28,6 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -83,17 +75,10 @@ public class AuthController {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         
-        // Default role is always ROLE_USER
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-        
-        // Only special email gets ROLE_ADMIN during registration (for setup/demonstration)
-        // In a real production app, this would be restricted further
         if ("balamanikantajogi591@gmail.com".equalsIgnoreCase(request.getEmail())) {
-            Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElseThrow();
-            user.setRoles(Set.of(userRole, adminRole));
+            user.setRole("ROLE_ADMIN");
         } else {
-            user.setRoles(Collections.singleton(userRole));
+            user.setRole("ROLE_USER");
         }
         
         user.setMfaEnabled(true);
@@ -110,12 +95,8 @@ public class AuthController {
             AuthResponse response = new AuthResponse(null, request.getUsername(), 0, false);
             checkRiskScore(request.getUsername(), request.getHourOfDay(), request.getDownloadCount(), request.getFailedLogins(), response);
 
-            List<SimpleGrantedAuthority> authorities = userOpt.get().getRoles().stream()
-                    .map(role -> new SimpleGrantedAuthority(role.getName()))
-                    .collect(Collectors.toList());
-
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                    request.getUsername(), null, authorities);
+                    request.getUsername(), null, List.of(new SimpleGrantedAuthority(userOpt.get().getRole())));
             response.setToken(jwtTokenProvider.generateToken(auth));
 
             return ResponseEntity.ok(response);
@@ -140,14 +121,10 @@ public class AuthController {
             // Generate a random password since they login via Google
             user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString()));
             
-            // Default role is always ROLE_USER
-            Role userRole = roleRepository.findByName("ROLE_USER").orElseThrow();
-
             if ("balamanikantajogi591@gmail.com".equalsIgnoreCase(email)) {
-                Role adminRole = roleRepository.findByName("ROLE_ADMIN").orElseThrow();
-                user.setRoles(Set.of(userRole, adminRole));
+                user.setRole("ROLE_ADMIN");
             } else {
-                user.setRoles(Collections.singleton(userRole));
+                user.setRole("ROLE_USER");
             }
             
             user.setMfaEnabled(true);
@@ -159,19 +136,14 @@ public class AuthController {
         AuthResponse response = new AuthResponse(null, user.getUsername(), 0, false);
         
         // MFA Enforcement: If it's a sensitive user (like admin), always require MFA
-        boolean isAdmin = user.getRoles().stream().anyMatch(r -> "ROLE_ADMIN".equals(r.getName()));
-        if (isAdmin) {
+        if ("ROLE_ADMIN".equals(user.getRole())) {
             response.setMfaRequired(true);
         }
         
         checkRiskScore(user.getUsername(), request.getHourOfDay(), request.getDownloadCount(), request.getFailedLogins(), response);
 
-        List<SimpleGrantedAuthority> authorities = user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
-
         UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                user.getUsername(), null, authorities);
+                user.getUsername(), null, List.of(new SimpleGrantedAuthority(user.getRole())));
         response.setToken(jwtTokenProvider.generateToken(auth));
 
         return ResponseEntity.ok(response);

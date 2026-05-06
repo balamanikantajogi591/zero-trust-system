@@ -42,15 +42,11 @@ public class SecurityConfig {
             }))
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .invalidSessionUrl("/login")
-                .maximumSessions(1)
             )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/public/**").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/analyst/**").hasAnyRole("ANALYST", "ADMIN")
-                .requestMatchers("/", "/index.html", "/favicon.ico", "/favicon.svg", "/icons.svg", "/assets/**", "/static/**", "/error").permitAll()
+                .requestMatchers("/", "/index.html", "/favicon.ico", "/favicon.svg", "/icons.svg", "/assets/**", "/static/**", "/error", "/manifest.json").permitAll()
                 .requestMatchers(request -> !request.getServletPath().startsWith("/api")).permitAll()
                 .anyRequest().authenticated()
             );

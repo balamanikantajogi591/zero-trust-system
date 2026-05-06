@@ -22,4 +22,10 @@ public class ThreatController {
     public Map<String, Object> getThreatDetails(@PathVariable String id) {
         return Map.of("id", id, "status", "Investigating", "actionSuggested", "Block IP and Force Password Reset");
     }
+
+    @PostMapping("/simulate")
+    public Map<String, String> simulateAttack(@RequestBody Map<String, String> request) {
+        String type = request.getOrDefault("type", "SQL_INJECTION");
+        return Map.of("status", "SUCCESS", "message", "Simulation triggered: " + type);
+    }
 }

@@ -17,38 +17,17 @@ export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('token');
-  let userRoles = [];
-  if (token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      userRoles = payload.roles ? payload.roles.split(',') : [];
-    } catch (e) {
-      console.error("Failed to decode token", e);
-    }
-  }
-
-  const isAdmin = userRoles.includes('ROLE_ADMIN');
-  const isAnalyst = userRoles.includes('ROLE_ANALYST') || isAdmin;
-
   const navItems = [
     { name: 'Dashboard', path: '/dashboard', icon: Activity },
-    { name: 'User Management', path: '/users', icon: Users, role: 'ROLE_ADMIN' },
-    { name: 'Threat Detection', path: '/threats', icon: AlertTriangle, role: 'ROLE_ANALYST' },
-    { name: 'AI Insights', path: '/insights', icon: BrainCircuit, role: 'ROLE_ANALYST' },
-    { name: 'Data Protection', path: '/data-access', icon: Database, role: 'ROLE_ANALYST' },
-    { name: 'Audit Logs', path: '/audit-logs', icon: Shield, role: 'ROLE_ANALYST' },
-    { name: 'Analytics', path: '/analytics', icon: BarChart3, role: 'ROLE_ANALYST' },
+    { name: 'User Management', path: '/users', icon: Users },
+    { name: 'Threat Detection', path: '/threats', icon: AlertTriangle },
+    { name: 'AI Insights', path: '/insights', icon: BrainCircuit },
+    { name: 'Data Protection', path: '/data-access', icon: Database },
+    { name: 'Audit Logs', path: '/audit-logs', icon: Shield },
+    { name: 'Analytics', path: '/analytics', icon: BarChart3 },
     { name: 'Notifications', path: '/notifications', icon: Bell },
     { name: 'Settings', path: '/settings', icon: Settings },
   ];
-
-  const filteredItems = navItems.filter(item => {
-    if (!item.role) return true;
-    if (item.role === 'ROLE_ADMIN') return isAdmin;
-    if (item.role === 'ROLE_ANALYST') return isAnalyst;
-    return false;
-  });
 
   return (
     <div className="w-64 min-h-screen bg-[#1a1a24] border-r border-white/5 flex flex-col fixed left-0 top-0 z-50">
@@ -64,7 +43,7 @@ export default function Sidebar() {
       
       <div className="flex-1 overflow-y-auto custom-scrollbar py-4 px-3">
         <nav className="space-y-1.5 relative">
-          {filteredItems.map((item) => {
+          {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
               <NavLink

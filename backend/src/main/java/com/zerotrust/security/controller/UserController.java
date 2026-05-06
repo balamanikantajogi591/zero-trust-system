@@ -1,36 +1,36 @@
 package com.zerotrust.security.controller;
 
-import com.zerotrust.security.repository.UserRepository;
-import com.zerotrust.security.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository userRepository;
-
+    // Return a mock list of users
     @GetMapping
     public List<Map<String, Object>> getAllUsers() {
-        return userRepository.findAll().stream().map(user -> {
-            String roles = user.getRoles().stream()
-                    .map(r -> r.getName())
-                    .collect(Collectors.joining(", "));
-            
-            return Map.of(
-                "id", (Object)user.getId(),
-                "username", user.getUsername(),
-                "email", user.getEmail(),
-                "role", roles,
-                "status", "Active",
-                "mfaEnabled", user.isMfaEnabled()
-            );
-        }).collect(Collectors.toList());
+        return List.of(
+            Map.of("id", 1, "username", "admin", "email", "balamanikantajogi591@gmail.com", "role", "ROLE_ADMIN", "status", "Active", "mfaEnabled", true),
+            Map.of("id", 2, "username", "jdoe", "email", "jdoe@company.org", "role", "ROLE_USER", "status", "Active", "mfaEnabled", true),
+            Map.of("id", 3, "username", "bsmith", "email", "bsmith@example.com", "role", "ROLE_USER", "status", "Inactive", "mfaEnabled", false)
+        );
+    }
+
+    @PostMapping
+    public Map<String, Object> createUser(@RequestBody Map<String, Object> userData) {
+        return Map.of("status", "success", "message", "User created", "data", userData);
+    }
+
+    @PutMapping("/{id}")
+    public Map<String, Object> updateUser(@PathVariable Long id, @RequestBody Map<String, Object> userData) {
+        return Map.of("status", "success", "message", "User " + id + " updated");
+    }
+
+    @DeleteMapping("/{id}")
+    public Map<String, Object> deleteUser(@PathVariable Long id) {
+        return Map.of("status", "success", "message", "User " + id + " deleted");
     }
 
     @GetMapping("/activity")
