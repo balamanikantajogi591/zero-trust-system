@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Shield, Lock, Mail, Fingerprint, Activity, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
+import logo from '../assets/logo.png';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -52,8 +53,8 @@ export default function Login() {
         className="glass-panel p-8 w-full max-w-md relative z-10"
       >
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-4 border border-primary/30">
-            <Shield className="w-8 h-8 text-primary" />
+          <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 border border-primary/20 backdrop-blur-sm overflow-hidden p-2">
+            <img src={logo} alt="Logo" className="w-full h-full object-contain drop-shadow-[0_0_5px_rgba(var(--primary-rgb),0.3)]" />
           </div>
           <h1 className="text-2xl font-bold text-white tracking-wider">TRUST<span className="text-primary">WEB</span></h1>
           <p className="text-gray-400 text-sm mt-1">Enterprise Security Operations</p>
