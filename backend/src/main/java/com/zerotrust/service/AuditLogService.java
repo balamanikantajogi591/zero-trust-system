@@ -1,6 +1,7 @@
 package com.zerotrust.service;
 
 import com.zerotrust.model.SecurityEvent;
+import com.zerotrust.model.AuditLog;
 import com.zerotrust.repository.SecurityEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
