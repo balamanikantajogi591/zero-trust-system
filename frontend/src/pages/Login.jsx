@@ -20,12 +20,10 @@ const LoginPage = ({ onLoginSuccess }) => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      // In a real scenario, we call the backend:
-      // const response = await authApi.login({ email, password });
-      // if (response.data.mfaRequired) { setStep('mfa'); }
-      
-      // Demo Fallback:
-      setStep('mfa');
+      const response = await authApi.login({ email, password });
+      if (response.data.mfaRequired || true) { // Force MFA step for Zero Trust demo
+        setStep('mfa'); 
+      }
       setError('');
     } catch (err) {
       setError('Invalid credentials or access denied by Zero Trust policy.');
@@ -35,12 +33,7 @@ const LoginPage = ({ onLoginSuccess }) => {
   const handleMfa = async (e) => {
     e.preventDefault();
     try {
-      // In a real scenario:
-      // const response = await authApi.verifyMfa({ email, otp });
-      // localStorage.setItem('token', response.data.token);
-      // onLoginSuccess(response.data.user);
-
-      // Demo Fallback:
+      // For demo purposes, we accept 123456 but in production this would verify via backend
       if (otp === '123456') {
         const isAdmin = email === 'balamanikantajogi591@gmail.com';
         onLoginSuccess({ role: isAdmin ? 'ADMIN' : 'USER', email });
