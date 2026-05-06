@@ -3,6 +3,7 @@ package com.zerotrust.service;
 import com.zerotrust.model.SecurityEvent;
 import com.zerotrust.model.AuditLog;
 import com.zerotrust.repository.SecurityEventRepository;
+import com.zerotrust.repository.AuditLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 
 @Service
@@ -17,22 +19,33 @@ import java.util.Base64;
 public class AuditLogService {
 
     private final SecurityEventRepository eventRepository;
+    private final AuditLogRepository auditLogRepository;
 
     public void logAction(String userId, String action, String details) {
         String dataToHash = userId + action + details + System.currentTimeMillis();
         String hash = generateHash(dataToHash);
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
         
         SecurityEvent event = SecurityEvent.builder()
                 .userId(userId)
                 .type(action)
                 .message(details)
                 .eventHash(hash)
-                .timestamp(LocalDateTime.now())
+                .timestamp(timestamp)
                 .status("COMPLETED")
                 .severity("INFO")
                 .build();
         
         eventRepository.save(event);
+
+        AuditLog auditLog = AuditLog.builder()
+                .userId(userId)
+                .action(action)
+                .details(details)
+                .hash(hash)
+                .timestamp(timestamp)
+                .build();
+        auditLogRepository.save(auditLog);
     }
 
     private String generateHash(String data) {
@@ -46,7 +59,7 @@ public class AuditLogService {
     }
 
     public boolean verifyIntegrity(AuditLog log) {
-        String rawData = log.getUserId() + log.getAction() + log.getDetails() + log.getTimestamp().toString();
+        String rawData = log.getUserId() + log.getAction() + log.getDetails() + log.getTimestamp();
         String currentHash = generateHash(rawData);
         return currentHash.equals(log.getHash());
     }

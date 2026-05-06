@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Component
@@ -42,18 +43,19 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("CRITICAL: ADMIN USER CREATED -> " + adminEmail);
         }
 
-        if (eventRepository.count() == 0) {
+        if (eventRepository.findAll().isEmpty()) {
             seedEvents();
             System.out.println("INFO: MOCK SECURITY EVENTS SEEDED");
         }
 
-        if (auditLogRepository.count() == 0) {
+        if (auditLogRepository.findAll().isEmpty()) {
             seedAuditLogs();
             System.out.println("INFO: MOCK AUDIT LOGS SEEDED");
         }
     }
 
     private void seedEvents() {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         List<SecurityEvent> events = List.of(
             SecurityEvent.builder()
                 .type("ANOMALY")
@@ -62,7 +64,7 @@ public class DataInitializer implements CommandLineRunner {
                 .userId("guest")
                 .riskScore(95)
                 .status("ACTIVE")
-                .timestamp(LocalDateTime.now().minusHours(2))
+                .timestamp(LocalDateTime.now().minusHours(2).format(formatter))
                 .build(),
             SecurityEvent.builder()
                 .type("DATA_ACCESS")
@@ -71,7 +73,7 @@ public class DataInitializer implements CommandLineRunner {
                 .userId("407")
                 .riskScore(75)
                 .status("ACTIVE")
-                .timestamp(LocalDateTime.now().minusHours(5))
+                .timestamp(LocalDateTime.now().minusHours(5).format(formatter))
                 .build(),
             SecurityEvent.builder()
                 .type("LOGIN")
@@ -80,27 +82,28 @@ public class DataInitializer implements CommandLineRunner {
                 .userId("admin")
                 .riskScore(45)
                 .status("BLOCKED")
-                .timestamp(LocalDateTime.now().minusDays(1))
+                .timestamp(LocalDateTime.now().minusDays(1).format(formatter))
                 .build()
         );
-        eventRepository.saveAll(events);
+        events.forEach(eventRepository::save);
     }
 
     private void seedAuditLogs() {
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
         List<AuditLog> logs = List.of(
             AuditLog.builder()
                 .userId("balamanikantajogi591@gmail.com")
                 .action("USER_LOGIN")
                 .details("Admin login verified via Google OAuth")
-                .timestamp(LocalDateTime.now().minusHours(1))
+                .timestamp(LocalDateTime.now().minusHours(1).format(formatter))
                 .build(),
             AuditLog.builder()
                 .userId("balamanikantajogi591@gmail.com")
                 .action("POLICY_UPDATE")
                 .details("Updated DLP masking rules for PII data")
-                .timestamp(LocalDateTime.now().minusHours(3))
+                .timestamp(LocalDateTime.now().minusHours(3).format(formatter))
                 .build()
         );
-        auditLogRepository.saveAll(logs);
+        logs.forEach(auditLogRepository::save);
     }
 }

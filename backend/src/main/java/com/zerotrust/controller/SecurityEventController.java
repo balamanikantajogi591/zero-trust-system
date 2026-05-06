@@ -18,11 +18,11 @@ public class SecurityEventController {
 
     @GetMapping
     public ResponseEntity<List<SecurityEvent>> getAllEvents() {
-        return ResponseEntity.ok(eventRepository.findAllByOrderByTimestampDesc());
+        return ResponseEntity.ok(eventRepository.findAll());
     }
 
     @PostMapping("/{id}/resolve")
-    public ResponseEntity<SecurityEvent> resolveEvent(@PathVariable Long id) {
+    public ResponseEntity<SecurityEvent> resolveEvent(@PathVariable String id) {
         return eventRepository.findById(id)
                 .map(event -> {
                     event.setStatus("RESOLVED");

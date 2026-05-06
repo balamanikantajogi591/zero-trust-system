@@ -1,6 +1,5 @@
 package com.zerotrust.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,13 +15,9 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "_user")
 public class User implements UserDetails {
 
-    @Id
-    @GeneratedValue
-    private Integer id;
+    private String id;
     private String firstname;
     private String lastname;
     private String email;
@@ -30,7 +25,6 @@ public class User implements UserDetails {
     private String deviceFingerprint;
     private boolean mfaEnabled;
 
-    @Enumerated(EnumType.STRING)
     private Role role;
 
     private String status; // Active, Inactive, Suspended

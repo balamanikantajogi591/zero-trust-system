@@ -1,6 +1,5 @@
 package com.zerotrust.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,13 +11,9 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "security_events")
 public class SecurityEvent {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
     
     private String type; // ANOMALY, DATA_ACCESS, LOGIN, etc.
     private String severity; // CRITICAL, HIGH, MEDIUM, LOW
@@ -27,5 +22,5 @@ public class SecurityEvent {
     private int riskScore;
     private String status; // ACTIVE, RESOLVED, BLOCKED
     private String eventHash; // SHA-256 integrity hash
-    private LocalDateTime timestamp;
+    private String timestamp; // Firestore works better with Strings or specific Timestamp objects
 }

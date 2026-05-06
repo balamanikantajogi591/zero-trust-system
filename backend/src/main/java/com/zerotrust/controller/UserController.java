@@ -25,7 +25,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();
     }
