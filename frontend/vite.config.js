@@ -6,5 +6,10 @@ export default defineConfig({
   plugins: [react()],
   define: {
     global: 'window',
-  }
+  },
+  build: {
+    rollupOptions: {
+      external: ['websocket', 'net'],
+    },
+  },
 })
