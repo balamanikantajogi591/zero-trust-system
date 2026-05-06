@@ -22,12 +22,20 @@ export default function Dashboard() {
   const [auditLogs, setAuditLogs] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userRoles, setUserRoles] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       navigate('/login');
       return;
+    }
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      setUserRoles(payload.roles ? payload.roles.split(',') : []);
+    } catch (e) {
+      console.error("Token decoding failed");
     }
 
     const fetchDashboardData = async () => {
@@ -65,48 +73,55 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, [navigate]);
 
+  const isAdmin = userRoles.includes('ROLE_ADMIN');
+  const isAnalyst = userRoles.includes('ROLE_ANALYST') || isAdmin;
+
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-end mb-6">
         <div>
-          <h1 className="text-3xl font-bold mb-1">Global Security Center</h1>
-          <p className="text-gray-400 text-sm">Real-time enterprise threat monitoring and anomaly detection.</p>
+          <h1 className="text-3xl font-bold mb-1">{isAdmin ? 'Global Security Center' : 'Personal Security Hub'}</h1>
+          <p className="text-gray-400 text-sm">
+            {isAdmin ? 'Real-time enterprise threat monitoring and anomaly detection.' : 'Monitoring your account activity and security status.'}
+          </p>
         </div>
         <div className="flex items-center space-x-2 text-xs font-mono bg-black/40 border border-white/10 px-3 py-1.5 rounded text-green-400">
           <span className="relative flex h-2 w-2 mr-1">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-          SYSTEM ARMED
+          SECURE CONNECTION
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <motion.div whileHover={{ y: -2 }} className="glass-panel p-5 border-t-2 border-t-primary cursor-default">
-          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Active Users</p>
+        {isAdmin && (
+          <motion.div whileHover={{ y: -2 }} className="glass-panel p-5 border-t-2 border-t-primary cursor-default">
+            <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Active Users</p>
+            <div className="flex justify-between items-end">
+              <h3 className="text-3xl font-bold">1,204</h3>
+              <Users className="w-6 h-6 text-primary/50 mb-1" />
+            </div>
+          </motion.div>
+        )}
+        <motion.div whileHover={{ y: -2 }} className="glass-panel p-5 border-t-2 border-t-green-500 cursor-default">
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Security Status</p>
           <div className="flex justify-between items-end">
-            <h3 className="text-3xl font-bold">1,204</h3>
-            <Users className="w-6 h-6 text-primary/50 mb-1" />
-          </div>
-        </motion.div>
-        <motion.div whileHover={{ y: -2 }} className="glass-panel p-5 border-t-2 border-t-red-500 cursor-default">
-          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Threat Alerts</p>
-          <div className="flex justify-between items-end">
-            <h3 className="text-3xl font-bold text-red-500">12</h3>
-            <AlertTriangle className="w-6 h-6 text-red-500/50 mb-1" />
+            <h3 className="text-3xl font-bold text-green-500">Safe</h3>
+            <ShieldCheck className="w-6 h-6 text-green-500/50 mb-1" />
           </div>
         </motion.div>
         <motion.div whileHover={{ y: -2 }} className="glass-panel p-5 border-t-2 border-t-accent cursor-default">
-          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Risk Score Avg</p>
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Personal Risk</p>
           <div className="flex justify-between items-end">
-            <h3 className="text-3xl font-bold text-accent">14.2</h3>
+            <h3 className="text-3xl font-bold text-accent">Low</h3>
             <Activity className="w-6 h-6 text-accent/50 mb-1" />
           </div>
         </motion.div>
         <motion.div whileHover={{ y: -2 }} className="glass-panel p-5 border-t-2 border-t-secondary cursor-default">
-          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">Blocked Requests</p>
+          <p className="text-gray-400 text-xs uppercase tracking-wider mb-1">DLP Blocks</p>
           <div className="flex justify-between items-end">
-            <h3 className="text-3xl font-bold text-secondary">89</h3>
+            <h3 className="text-3xl font-bold text-secondary">0</h3>
             <ShieldOff className="w-6 h-6 text-secondary/50 mb-1" />
           </div>
         </motion.div>
@@ -114,56 +129,62 @@ export default function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <div className="glass-panel p-5">
-            <h2 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-400 flex items-center">
-              <Activity className="w-4 h-4 mr-2 text-primary" /> Login Activity vs Anomalies
-            </h2>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={loginData}>
-                  <defs>
-                    <linearGradient id="colorValid" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-                    </linearGradient>
-                    <linearGradient id="colorAnom" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
-                  <XAxis dataKey="time" stroke="#666" fontSize={12} />
-                  <YAxis stroke="#666" fontSize={12} />
-                  <Tooltip contentStyle={{ backgroundColor: '#1a1a24', borderColor: '#333' }} />
-                  <Area type="monotone" dataKey="valid" stroke="#3b82f6" fillOpacity={1} fill="url(#colorValid)" />
-                  <Area type="monotone" dataKey="anomalous" stroke="#ef4444" fillOpacity={1} fill="url(#colorAnom)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {isAnalyst && (
             <div className="glass-panel p-5">
               <h2 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-400 flex items-center">
-                <AlertTriangle className="w-4 h-4 mr-2 text-orange-500" /> Threat Trend
+                <Activity className="w-4 h-4 mr-2 text-primary" /> Global Login Trends
               </h2>
-              <div className="h-48">
+              <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={threatData}>
+                  <AreaChart data={loginData}>
+                    <defs>
+                      <linearGradient id="colorValid" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                      </linearGradient>
+                      <linearGradient id="colorAnom" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
                     <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
-                    <XAxis dataKey="time" stroke="#666" fontSize={10} />
+                    <XAxis dataKey="time" stroke="#666" fontSize={12} />
+                    <YAxis stroke="#666" fontSize={12} />
                     <Tooltip contentStyle={{ backgroundColor: '#1a1a24', borderColor: '#333' }} />
-                    <Line type="monotone" dataKey="threats" stroke="#f97316" strokeWidth={2} dot={{r:3, fill:'#f97316'}} />
-                  </LineChart>
+                    <Area type="monotone" dataKey="valid" stroke="#3b82f6" fillOpacity={1} fill="url(#colorValid)" />
+                    <Area type="monotone" dataKey="anomalous" stroke="#ef4444" fillOpacity={1} fill="url(#colorAnom)" />
+                  </AreaChart>
                 </ResponsiveContainer>
               </div>
             </div>
+          )}
 
-            <div className="glass-panel p-5 relative overflow-hidden flex flex-col justify-center items-center text-center">
+          <div className={`grid grid-cols-1 ${isAnalyst ? 'md:grid-cols-2' : ''} gap-6`}>
+            {isAnalyst && (
+              <div className="glass-panel p-5">
+                <h2 className="text-sm font-bold mb-4 uppercase tracking-wider text-gray-400 flex items-center">
+                  <AlertTriangle className="w-4 h-4 mr-2 text-orange-500" /> Enterprise Threats
+                </h2>
+                <div className="h-48">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={threatData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                      <XAxis dataKey="time" stroke="#666" fontSize={10} />
+                      <Tooltip contentStyle={{ backgroundColor: '#1a1a24', borderColor: '#333' }} />
+                      <Line type="monotone" dataKey="threats" stroke="#f97316" strokeWidth={2} dot={{r:3, fill:'#f97316'}} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
+
+            <div className={`glass-panel p-5 relative overflow-hidden flex flex-col justify-center items-center text-center ${!isAnalyst ? 'h-full' : ''}`}>
               <div className="absolute inset-0 opacity-10 bg-[url('https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg')] bg-no-repeat bg-center bg-cover"></div>
               <Globe className="w-10 h-10 text-primary mb-3 relative z-10" />
-              <h3 className="text-lg font-bold text-white relative z-10">Geo-Tracking Active</h3>
-              <p className="text-xs text-gray-400 relative z-10 mt-2">Monitoring logins across 43 countries. 12 anomalous regions detected.</p>
+              <h3 className="text-lg font-bold text-white relative z-10">Access Monitoring</h3>
+              <p className="text-xs text-gray-400 relative z-10 mt-2">
+                Your account is currently protected by Zero Trust verification across all geographic locations.
+              </p>
             </div>
           </div>
         </div>
@@ -172,7 +193,7 @@ export default function Dashboard() {
           <div className="glass-panel p-5 flex flex-col h-[400px]">
             <h2 className="text-sm font-bold mb-3 uppercase tracking-wider text-gray-400 flex items-center justify-between">
               <div className="flex items-center">
-                <ShieldCheck className="w-4 h-4 mr-2 text-accent" /> Live Activity Feed
+                <ShieldCheck className="w-4 h-4 mr-2 text-accent" /> {isAnalyst ? 'Live Security Feed' : 'Your Recent Activity'}
               </div>
             </h2>
             <div className="flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar">
@@ -205,28 +226,30 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="glass-panel p-5 flex flex-col h-[280px]">
-            <h2 className="text-sm font-bold mb-3 uppercase tracking-wider text-gray-400 flex items-center justify-between">
-              <div className="flex items-center text-red-500">
-                <Bell className="w-4 h-4 mr-2" /> Critical Alerts
-              </div>
-            </h2>
-            <div className="flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar">
-              {alerts.length > 0 ? (
-                alerts.map((alert, idx) => (
-                  <div key={idx} className="bg-red-500/10 border border-red-500/30 p-3 rounded text-sm">
-                    <p className="font-bold text-red-400 mb-1">{alert.title}</p>
-                    <p className="text-xs text-gray-400">{alert.message}</p>
-                  </div>
-                ))
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-gray-500">
-                  <ShieldCheck className="w-8 h-8 mb-2 opacity-50" />
-                  <p className="text-xs">No active critical alerts.</p>
+          {isAnalyst && (
+            <div className="glass-panel p-5 flex flex-col h-[280px]">
+              <h2 className="text-sm font-bold mb-3 uppercase tracking-wider text-gray-400 flex items-center justify-between">
+                <div className="flex items-center text-red-500">
+                  <Bell className="w-4 h-4 mr-2" /> Critical Alerts
                 </div>
-              )}
+              </h2>
+              <div className="flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar">
+                {alerts.length > 0 ? (
+                  alerts.map((alert, idx) => (
+                    <div key={idx} className="bg-red-500/10 border border-red-500/30 p-3 rounded text-sm">
+                      <p className="font-bold text-red-400 mb-1">{alert.title}</p>
+                      <p className="text-xs text-gray-400">{alert.message}</p>
+                    </div>
+                  ))
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full text-gray-500">
+                    <ShieldCheck className="w-8 h-8 mb-2 opacity-50" />
+                    <p className="text-xs">No active critical alerts.</p>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
