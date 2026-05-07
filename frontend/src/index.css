@@ -30,3 +30,7 @@ body {
 .neon-border {
   @apply border-primary/50 shadow-[0_0_10px_rgba(59,130,246,0.2)];
 }
+
+@utility perspective-1000 {
+  perspective: 1000px;
+}
