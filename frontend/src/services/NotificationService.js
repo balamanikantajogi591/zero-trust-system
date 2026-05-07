@@ -11,7 +11,7 @@ class NotificationService {
         const backendUrl = window.location.hostname === 'localhost' 
             ? 'http://localhost:8080' 
             : window.location.origin;
-        const socket = new SockJS(`${backendUrl}/ws`);
+        const socket = new SockJS(`${backendUrl}/ws-alerts`);
         this.stompClient = Stomp.over(socket);
         this.stompClient.debug = null; // Disable debug logging for production
 
