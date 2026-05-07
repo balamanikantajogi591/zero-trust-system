@@ -114,7 +114,7 @@ const Notifications = () => {
           </motion.div>
         )) : (
           <div className="text-center py-20 text-gray-600">
-            {loading ? "Syncing with Zero Trust Engine..." : "No recent security events found."}
+            {loading ? "Syncing with Security Engine..." : "No recent security events found."}
           </div>
         )}
       </div>

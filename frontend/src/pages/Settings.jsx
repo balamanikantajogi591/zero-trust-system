@@ -79,7 +79,7 @@ const Settings = () => {
           <section className="glass-card p-6 space-y-6">
             <h3 className="text-lg font-bold flex items-center gap-2 border-b border-white/5 pb-4">
               <Shield className="w-5 h-5 text-primary" />
-              Zero Trust Policies
+              Advanced Security Policies
             </h3>
             <div className="space-y-6">
               <div className="flex items-center justify-between">

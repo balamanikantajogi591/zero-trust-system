@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.zerotrust</groupId>
-        <artifactId>zero-trust-system</artifactId>
+        <groupId>com.advancedsecurity</groupId>
+        <artifactId>advanced-security-data-protection</artifactId>
         <version>1.0.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
@@ -14,7 +14,7 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>Zero Trust System - ML Service</name>
+    <name>Advanced Security - ML Service</name>
 
     <properties>
         <skipML>false</skipML>

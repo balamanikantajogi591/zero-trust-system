@@ -33,7 +33,7 @@ const Sidebar = ({ user }) => {
       <div className="p-6">
         <h1 className="text-xl font-bold flex items-center gap-2 text-primary">
           <ShieldAlert className="w-8 h-8" />
-          <span className="tracking-tight">ZERO TRUST</span>
+          <span className="tracking-tight">ADVANCED SECURITY</span>
         </h1>
       </div>
 

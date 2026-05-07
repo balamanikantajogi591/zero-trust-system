@@ -50,7 +50,7 @@ const LandingPage = () => {
         className="text-5xl md:text-7xl font-extrabold tracking-tighter mb-6 bg-gradient-to-b from-white to-gray-500 bg-clip-text text-transparent"
       >
         AI-POWERED <br />
-        <span className="text-primary">ZERO TRUST</span> SECURITY
+        <span className="text-primary">ADVANCED</span> SECURITY & DATA PROTECTION
       </motion.h1>
 
       <motion.p 
@@ -91,7 +91,7 @@ const LandingPage = () => {
         className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-24 w-full max-w-5xl"
       >
         {[
-          { icon: Shield, label: "Zero Trust" },
+          { icon: Shield, label: "Advanced Security" },
           { icon: Cpu, label: "AI Engine" },
           { icon: Lock, label: "DLP" },
           { icon: Globe, label: "Global SOC" },

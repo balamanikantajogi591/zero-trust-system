@@ -3,15 +3,15 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.zerotrust</groupId>
-		<artifactId>zero-trust-system</artifactId>
+		<groupId>com.advancedsecurity</groupId>
+		<artifactId>advanced-security-data-protection</artifactId>
 		<version>1.0.0</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>security-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>security-backend</name>
-	<description>Zero Trust Data Protection &amp; Threat Intelligence System</description>
+	<description>Advanced Security &amp; Data Protection System</description>
 	<properties>
 		<java.version>17</java.version>
 		<maven.compiler.source>17</maven.compiler.source>
@@ -70,6 +70,7 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
+			<version>1.18.34</version>
 			<optional>true</optional>
 		</dependency>
 		<dependency>

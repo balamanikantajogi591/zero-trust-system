@@ -3,13 +3,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.zerotrust</groupId>
-    <artifactId>zero-trust-system</artifactId>
+    <groupId>com.advancedsecurity</groupId>
+    <artifactId>advanced-security-data-protection</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <name>Zero Trust System - Parent</name>
-    <description>Parent project for Zero Trust Data Protection &amp; Threat Intelligence System</description>
+    <name>Advanced Security Data Protection - Parent</name>
+    <description>Parent project for Advanced Security &amp; Data Protection</description>
 
     <modules>
         <module>backend</module>

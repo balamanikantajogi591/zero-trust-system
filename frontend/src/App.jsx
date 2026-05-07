@@ -24,7 +24,7 @@ const Placeholder = ({ title }) => (
   <div className="p-8">
     <h1 className="text-2xl font-bold text-primary mb-4">{title}</h1>
     <div className="glass-card p-12 text-center text-gray-500">
-      This page is under construction for the Zero Trust System.
+      This page is under construction for the Advanced Security System.
     </div>
   </div>
 );

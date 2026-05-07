@@ -7,7 +7,7 @@ import pickle
 import os
 from datetime import datetime
 
-app = FastAPI(title="Zero Trust AI Threat Intelligence")
+app = FastAPI(title="Advanced Security AI Threat Intelligence")
 
 # Model configuration
 MODEL_PATH = "isolation_forest.pkl"

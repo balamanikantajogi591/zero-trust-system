@@ -7,6 +7,6 @@
     "healthCheckPath": "/health",
 
     "healthCheckTimeout": 600,
-    "serviceName": "zero-trust-system"
+    "serviceName": "advanced-security-system"
   }
 }
