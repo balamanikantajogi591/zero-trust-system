@@ -16,33 +16,28 @@ import java.io.InputStream;
 @Configuration
 public class FirebaseConfig {
 
-    @PostConstruct
-    public void initialize() throws IOException {
-        String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
-        InputStream serviceAccount;
-
-        if (serviceAccountJson != null && !serviceAccountJson.isEmpty()) {
-            serviceAccount = new ByteArrayInputStream(serviceAccountJson.getBytes());
-        } else {
-            // Fallback to local file for development
-            serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
-            if (serviceAccount == null) {
-                System.err.println("CRITICAL: Firebase Service Account key not found in environment or classpath!");
-                return;
-            }
-        }
-
-        FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                .build();
-
+    @Bean
+    public Firestore getFirestore() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
+            String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
+            InputStream serviceAccount;
+
+            if (serviceAccountJson != null && !serviceAccountJson.isEmpty()) {
+                serviceAccount = new ByteArrayInputStream(serviceAccountJson.getBytes());
+            } else {
+                // Fallback to local file for development
+                serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
+                if (serviceAccount == null) {
+                    throw new IOException("CRITICAL: Firebase Service Account key not found in environment or classpath!");
+                }
+            }
+
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .build();
+
             FirebaseApp.initializeApp(options);
         }
-    }
-
-    @Bean
-    public Firestore getFirestore() {
         return FirestoreClient.getFirestore();
     }
 }
