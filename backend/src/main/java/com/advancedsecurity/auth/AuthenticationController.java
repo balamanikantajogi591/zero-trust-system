@@ -18,13 +18,14 @@ public class AuthenticationController {
      * Admin-only login endpoint.
      * Rejects all accounts that do not have ADMIN role.
      */
-    @PostMapping("/login")
+    @PostMapping({"/login", "/admin-login"})
     public ResponseEntity<?> login(
             @RequestBody AuthenticationRequest request,
             jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
         return service.login(request, httpRequest);
     }
+
 
     /**
      * Legacy authenticate kept for backward compatibility only.
