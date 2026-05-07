@@ -1,5 +1,5 @@
 import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
+import { Client } from '@stomp/stompjs';
 
 class NotificationService {
     constructor() {
@@ -11,20 +11,25 @@ class NotificationService {
         const backendUrl = window.location.hostname === 'localhost' 
             ? 'http://localhost:8080' 
             : window.location.origin;
-        const socket = new SockJS(`${backendUrl}/ws-alerts`);
-        this.stompClient = Stomp.over(socket);
-        this.stompClient.debug = null; // Disable debug logging for production
-
-        this.stompClient.connect({}, (frame) => {
-            this.stompClient.subscribe('/topic/alerts', (message) => {
-                const alert = JSON.parse(message.body);
-                this.callbacks.forEach(callback => callback(alert));
-            });
-        }, (error) => {
-            console.error('WebSocket Error: ', error);
-            // Reconnect after 5 seconds
-            setTimeout(() => this.connect(), 5000);
+            
+        this.stompClient = new Client({
+            webSocketFactory: () => new SockJS(`${backendUrl}/ws-alerts`),
+            reconnectDelay: 5000,
+            debug: () => {}, // Disable debug logging for production
+            onConnect: () => {
+                this.stompClient.subscribe('/topic/alerts', (message) => {
+                    if (message.body) {
+                        const alert = JSON.parse(message.body);
+                        this.callbacks.forEach(callback => callback(alert));
+                    }
+                });
+            },
+            onStompError: (frame) => {
+                console.error('Broker reported error: ' + frame.headers['message']);
+            }
         });
+
+        this.stompClient.activate();
     }
 
     onMessageReceived(callback) {
@@ -33,7 +38,7 @@ class NotificationService {
 
     disconnect() {
         if (this.stompClient) {
-            this.stompClient.disconnect();
+            this.stompClient.deactivate();
         }
     }
 }

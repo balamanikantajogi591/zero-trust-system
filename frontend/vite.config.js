@@ -7,10 +7,5 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   define: {
     global: 'window',
-  },
-  build: {
-    rollupOptions: {
-      external: ['websocket', 'net'],
-    },
-  },
+  }
 })
