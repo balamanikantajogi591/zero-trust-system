@@ -32,7 +32,9 @@ export const authApi = {
 
 export const userApi = {
   getAllUsers: () => api.get('/users'),
+  createUser: (userData) => api.post('/users', userData),
   updateUserRole: (id, role) => api.put(`/users/${id}/role`, { role }),
+  deleteUser: (id) => api.delete(`/users/${id}`),
 };
 
 export const threatApi = {
@@ -53,6 +55,10 @@ export const dlpApi = {
 export const aiApi = {
   getStats: () => api.get('/ai/stats'),
   trainModel: () => api.post('/ai/train'),
+};
+
+export const auditApi = {
+  getLogs: () => api.get('/audit'),
 };
 
 export default api;

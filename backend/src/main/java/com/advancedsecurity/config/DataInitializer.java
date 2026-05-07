@@ -43,6 +43,9 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("CRITICAL: ADMIN USER CREATED -> " + adminEmail);
         }
 
+        // Seed diverse demo users
+        seedDemoUsers();
+
         if (eventRepository.findAll().isEmpty()) {
             seedEvents();
             System.out.println("INFO: MOCK SECURITY EVENTS SEEDED");
@@ -53,6 +56,32 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("INFO: MOCK AUDIT LOGS SEEDED");
         }
     }
+
+    private void seedDemoUsers() {
+        Object[][] demoUsers = {
+            {"Alice", "Johnson", "alice.johnson@securecorp.com", "ANALYST", "Active", 22},
+            {"Bob", "Smith", "bob.smith@securecorp.com", "USER", "Active", 45},
+            {"Carol", "Davis", "carol.davis@securecorp.com", "VIEWER", "Active", 10},
+            {"Dave", "Wilson", "dave.wilson@securecorp.com", "USER", "Suspended", 88},
+            {"Eve", "Martinez", "eve.martinez@securecorp.com", "ANALYST", "Active", 31},
+        };
+        for (Object[] u : demoUsers) {
+            String email = (String) u[2];
+            if (userRepository.findByEmail(email).isEmpty()) {
+                userRepository.save(User.builder()
+                    .firstname((String) u[0])
+                    .lastname((String) u[1])
+                    .email(email)
+                    .password(passwordEncoder.encode("Welcome@123"))
+                    .role(Role.valueOf((String) u[3]))
+                    .status((String) u[4])
+                    .riskScore((Integer) u[5])
+                    .mfaEnabled(false)
+                    .build());
+            }
+        }
+    }
+
 
     private void seedEvents() {
         DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
