@@ -2,25 +2,34 @@ package com.advancedsecurity.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
     private final AuthenticationService service;
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+    /**
+     * Admin-only login endpoint.
+     * Rejects all accounts that do not have ADMIN role.
+     */
+    @PostMapping("/admin-login")
+    public ResponseEntity<?> adminLogin(
+            @RequestBody AuthenticationRequest request,
+            jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
-        return ResponseEntity.ok(service.register(request));
+        return service.adminLogin(request, httpRequest);
     }
 
+    /**
+     * Legacy authenticate kept for backward compatibility only.
+     * Disabled for public access — all callers should use /admin-login.
+     */
     @PostMapping("/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request,

@@ -26,9 +26,10 @@ api.interceptors.request.use(
 );
 
 export const authApi = {
-  login: (credentials) => api.post('/auth/authenticate', credentials),
-  register: (userData) => api.post('/auth/register', userData),
+  // Admin-only login — rejects non-ADMIN roles
+  adminLogin: (credentials) => api.post('/auth/admin-login', credentials),
 };
+
 
 export const userApi = {
   getAllUsers: () => api.get('/users'),
