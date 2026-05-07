@@ -1,5 +1,12 @@
 package com.zerotrust.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,9 +22,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "users")
 public class User implements UserDetails {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+    
     private String firstname;
     private String lastname;
     private String email;
@@ -25,6 +37,7 @@ public class User implements UserDetails {
     private String deviceFingerprint;
     private boolean mfaEnabled;
 
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     private String status; // Active, Inactive, Suspended
