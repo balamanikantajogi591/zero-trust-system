@@ -17,27 +17,33 @@ import java.io.InputStream;
 public class FirebaseConfig {
 
     @Bean
-    public Firestore getFirestore() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
-            InputStream serviceAccount;
-
-            if (serviceAccountJson != null && !serviceAccountJson.isEmpty()) {
-                serviceAccount = new ByteArrayInputStream(serviceAccountJson.getBytes());
-            } else {
-                // Fallback to local file for development
-                serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
-                if (serviceAccount == null) {
-                    throw new IOException("CRITICAL: Firebase Service Account key not found in environment or classpath!");
-                }
-            }
-
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-                    .build();
-
-            FirebaseApp.initializeApp(options);
+    public FirebaseApp firebaseApp() throws IOException {
+        if (!FirebaseApp.getApps().isEmpty()) {
+            return FirebaseApp.getInstance();
         }
-        return FirestoreClient.getFirestore();
+
+        String serviceAccountJson = System.getenv("FIREBASE_SERVICE_ACCOUNT");
+        InputStream serviceAccount;
+
+        if (serviceAccountJson != null && !serviceAccountJson.isEmpty()) {
+            serviceAccount = new ByteArrayInputStream(serviceAccountJson.getBytes());
+        } else {
+            // Fallback to local file for development
+            serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
+            if (serviceAccount == null) {
+                throw new IOException("CRITICAL: Firebase Service Account key not found in environment or classpath!");
+            }
+        }
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                .build();
+
+        return FirebaseApp.initializeApp(options);
+    }
+
+    @Bean
+    public Firestore getFirestore(FirebaseApp firebaseApp) {
+        return FirestoreClient.getFirestore(firebaseApp);
     }
 }
