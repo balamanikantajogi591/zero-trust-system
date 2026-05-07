@@ -18,12 +18,12 @@ public class AuthenticationController {
      * Admin-only login endpoint.
      * Rejects all accounts that do not have ADMIN role.
      */
-    @PostMapping("/admin-login")
-    public ResponseEntity<?> adminLogin(
+    @PostMapping("/login")
+    public ResponseEntity<?> login(
             @RequestBody AuthenticationRequest request,
             jakarta.servlet.http.HttpServletRequest httpRequest
     ) {
-        return service.adminLogin(request, httpRequest);
+        return service.login(request, httpRequest);
     }
 
     /**

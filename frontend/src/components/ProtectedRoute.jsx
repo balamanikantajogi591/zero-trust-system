@@ -11,13 +11,9 @@ const ProtectedRoute = ({ children }) => {
 
   try {
     const user = JSON.parse(userStr);
-    if (user.role !== 'ADMIN') {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      return <Navigate to="/login" replace />;
-    }
     return children;
   } catch {
+
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     return <Navigate to="/login" replace />;

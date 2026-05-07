@@ -27,11 +27,10 @@ public class AuthenticationService {
     private final com.advancedsecurity.service.ThreatIntelligenceService threatIntelligenceService;
 
     /**
-     * Admin-only login.
-     * Authenticates credentials via Spring Security, then enforces ADMIN role.
-     * Returns 403 with a clear message if the account is not ADMIN.
+     * Unified login for all roles.
+     * Authenticates credentials via Spring Security.
      */
-    public ResponseEntity<?> adminLogin(AuthenticationRequest request,
+    public ResponseEntity<?> login(AuthenticationRequest request,
                                         jakarta.servlet.http.HttpServletRequest httpRequest) {
         // Step 1: Authenticate credentials
         authenticationManager.authenticate(
@@ -44,13 +43,7 @@ public class AuthenticationService {
         // Step 2: Load user
         var user = repository.findByEmail(request.getEmail()).orElseThrow();
 
-        // Step 3: Enforce ADMIN role — reject all other roles
-        if (user.getRole() != Role.ADMIN) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("message", "Access Restricted: Admins Only. Your account does not have admin privileges."));
-        }
-
-        // Step 4: AI Risk check (skip for admin to avoid false positives on demo)
+        // Step 3: AI Risk check
         String userAgent = httpRequest.getHeader("User-Agent");
         int riskScore = threatIntelligenceService.predictRisk(user.getEmail(), Map.of(
                 "hour_of_day", java.time.LocalTime.now().getHour(),
@@ -59,12 +52,12 @@ public class AuthenticationService {
                 "device_reputation", userAgent != null && userAgent.contains("Mobile") ? 0.8 : 1.0
         ));
 
-        if (riskScore > 95) { // Very high threshold for admin — only block extreme anomalies
+        if (riskScore > 98) { // Very high threshold — only block extreme anomalies
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("message", "AI Security Engine: Extreme risk anomaly detected (Score: " + riskScore + "). Access denied."));
         }
 
-        // Step 5: Issue tokens
+        // Step 4: Issue tokens
         var jwtToken = jwtService.generateToken(user);
 
         return ResponseEntity.ok(Map.of(

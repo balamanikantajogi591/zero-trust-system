@@ -15,7 +15,7 @@ import Analytics from './pages/Analytics';
 import Notifications from './pages/Notifications';
 import Settings from './pages/Settings';
 import Profile from './pages/Profile';
-import AdminLogin from './pages/AdminLogin';
+import LoginPage from './pages/LoginPage';
 import LandingPage from './pages/LandingPage';
 import notificationService from './services/NotificationService';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -27,12 +27,6 @@ function App() {
       const savedUser = localStorage.getItem('user');
       if (!savedUser) return null;
       const parsed = JSON.parse(savedUser);
-      // Only allow ADMIN
-      if (parsed.role !== 'ADMIN') {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        return null;
-      }
       return parsed;
     } catch { return null; }
   });
@@ -109,9 +103,9 @@ function App() {
             {/* Public Landing */}
             <Route path="/" element={<LandingPage />} />
 
-            {/* Admin Login */}
+            {/* Login */}
             <Route path="/login" element={
-              user ? <Navigate to="/dashboard" replace /> : <AdminLogin onLoginSuccess={setUser} />
+              user ? <Navigate to="/dashboard" replace /> : <LoginPage onLoginSuccess={setUser} />
             } />
 
             {/* Protected Admin Routes — all wrapped with ProtectedRoute */}

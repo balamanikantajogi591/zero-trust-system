@@ -26,9 +26,10 @@ api.interceptors.request.use(
 );
 
 export const authApi = {
-  // Admin-only login — rejects non-ADMIN roles
-  adminLogin: (credentials) => api.post('/auth/admin-login', credentials),
+  // Unified login for all roles
+  login: (credentials) => api.post('/auth/login', credentials),
 };
+
 
 
 export const userApi = {

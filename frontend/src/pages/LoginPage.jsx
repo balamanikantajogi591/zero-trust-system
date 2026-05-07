@@ -93,8 +93,8 @@ const InputField = ({ icon: Icon, label, type, value, onChange, rightEl, id }) =
   </div>
 );
 
-/* ─── Main AdminLogin ─── */
-const AdminLogin = ({ onLoginSuccess }) => {
+/* ─── Main LoginPage ─── */
+const LoginPage = ({ onLoginSuccess }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -128,15 +128,8 @@ const AdminLogin = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      const response = await authApi.adminLogin({ email, password });
+      const response = await authApi.login({ email, password });
       const { token, role, username, email: respEmail } = response.data;
-
-      if (role !== 'ADMIN') {
-        setError('Access Restricted: Admins Only. Your account does not have admin privileges.');
-        triggerShake();
-        setLoading(false);
-        return;
-      }
 
       const userData = {
         role,
@@ -158,8 +151,8 @@ const AdminLogin = ({ onLoginSuccess }) => {
 
     } catch (err) {
       const msg = err.response?.data?.message || err.response?.data || '';
-      if (err.response?.status === 403 || String(msg).toLowerCase().includes('admin')) {
-        setError('Access Restricted: Admins Only.');
+      if (err.response?.status === 403) {
+        setError(msg || 'Access Restricted.');
       } else if (err.response?.status === 401) {
         setError('Invalid credentials. Please verify your email and password.');
       } else {
@@ -200,7 +193,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
             <CyberShield />
 
             <h1 className="text-2xl font-extrabold tracking-tighter text-white mb-1">
-              Admin Portal
+              Security Portal
             </h1>
             <div className="text-primary text-xs font-mono h-5">
               {typedText}
@@ -232,9 +225,9 @@ const AdminLogin = ({ onLoginSuccess }) => {
           {/* Form */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <InputField
-              id="admin-email"
+              id="user-email"
               icon={Mail}
-              label="Administrator Email"
+              label="User Email"
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
@@ -327,7 +320,7 @@ const AdminLogin = ({ onLoginSuccess }) => {
           {/* Divider */}
           <div className="flex items-center gap-3 my-6">
             <div className="flex-1 h-px bg-white/5" />
-            <span className="text-[10px] text-gray-700 uppercase tracking-widest">Admin Access Only</span>
+            <span className="text-[10px] text-gray-700 uppercase tracking-widest">Secure Access</span>
             <div className="flex-1 h-px bg-white/5" />
           </div>
 
@@ -344,4 +337,4 @@ const AdminLogin = ({ onLoginSuccess }) => {
   );
 };
 
-export default AdminLogin;
+export default LoginPage;
