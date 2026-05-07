@@ -1,9 +1,12 @@
 package com.zerotrust.service;
 
+import com.zerotrust.model.SecurityEvent;
+import com.zerotrust.repository.SecurityEventRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 @Service
 @RequiredArgsConstructor

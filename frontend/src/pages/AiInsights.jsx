@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { 
   BrainCircuit, 
   Cpu, 
@@ -22,24 +21,43 @@ import {
   Tooltip, 
   Legend 
 } from 'recharts';
-
-const pieData = [
-  { name: 'Normal', value: 850, color: '#10b981' },
-  { name: 'Anomalous', value: 120, color: '#f43f5e' },
-  { name: 'Suspicious', value: 30, color: '#f59e0b' },
-];
-
-const barData = [
-  { name: 'Mon', risk: 45, traffic: 120 },
-  { name: 'Tue', risk: 32, traffic: 150 },
-  { name: 'Wed', risk: 78, traffic: 180 },
-  { name: 'Thu', risk: 55, traffic: 140 },
-  { name: 'Fri', risk: 90, traffic: 210 },
-  { name: 'Sat', risk: 25, traffic: 90 },
-  { name: 'Sun', risk: 15, traffic: 70 },
-];
+import { aiApi } from '../services/api';
 
 const AiInsights = () => {
+  const [stats, setStats] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+  const [retraining, setRetraining] = React.useState(false);
+
+  React.useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const res = await aiApi.getStats();
+      setStats(res.data);
+    } catch (err) {
+      console.error("Failed to fetch AI stats", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRetrain = async () => {
+    setRetraining(true);
+    try {
+      await aiApi.trainModel();
+      await fetchStats();
+      alert("Model retrained successfully!");
+    } catch (err) {
+      alert("Retraining failed: " + err.message);
+    } finally {
+      setRetraining(false);
+    }
+  };
+
+  if (loading) return <div className="p-8 text-center">Loading AI Insights...</div>;
+
   return (
     <div className="p-8 space-y-8">
       <div className="flex justify-between items-end">
@@ -47,9 +65,13 @@ const AiInsights = () => {
           <h1 className="text-3xl font-bold neon-text mb-2">AI Insights</h1>
           <p className="text-gray-500">Machine learning model performance and behavioral analytics</p>
         </div>
-        <button className="flex items-center gap-2 bg-primary hover:bg-primary/80 px-6 py-2 rounded-xl text-sm font-semibold transition-all shadow-glow">
-          <RefreshCcw className="w-4 h-4" />
-          Retrain Model
+        <button 
+          onClick={handleRetrain}
+          disabled={retraining}
+          className="flex items-center gap-2 bg-primary hover:bg-primary/80 px-6 py-2 rounded-xl text-sm font-semibold transition-all shadow-glow disabled:opacity-50"
+        >
+          <RefreshCcw className={`w-4 h-4 ${retraining ? 'animate-spin' : ''}`} />
+          {retraining ? 'Retraining...' : 'Retrain Model'}
         </button>
       </div>
 
@@ -62,7 +84,7 @@ const AiInsights = () => {
             </div>
             <h3 className="font-semibold">Model Accuracy</h3>
           </div>
-          <p className="text-3xl font-bold text-white">98.4%</p>
+          <p className="text-3xl font-bold text-white">{(stats?.accuracy * 100).toFixed(1)}%</p>
           <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
             <TrendingUp className="w-3 h-3 text-secondary" /> +0.2% from last version
           </p>
@@ -75,8 +97,8 @@ const AiInsights = () => {
             </div>
             <h3 className="font-semibold">Active Model</h3>
           </div>
-          <p className="text-xl font-bold text-white">Isolation Forest v2.4</p>
-          <p className="text-xs text-gray-500 mt-2">Contamination Rate: 0.1</p>
+          <p className="text-xl font-bold text-white">{stats?.model_version}</p>
+          <p className="text-xs text-gray-500 mt-2">Contamination Rate: {stats?.contamination}</p>
         </div>
 
         <div className="glass-card p-6 border-l-4 border-accent">
@@ -86,7 +108,7 @@ const AiInsights = () => {
             </div>
             <h3 className="font-semibold">False Positives</h3>
           </div>
-          <p className="text-3xl font-bold text-white">1.2%</p>
+          <p className="text-3xl font-bold text-white">{(stats?.false_positive_rate * 100).toFixed(1)}%</p>
           <p className="text-xs text-gray-500 mt-2">Target: &lt; 2.0%</p>
         </div>
       </div>
@@ -102,7 +124,7 @@ const AiInsights = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={pieData}
+                  data={stats?.traffic_classification}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -110,7 +132,7 @@ const AiInsights = () => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {pieData.map((entry, index) => (
+                  {stats?.traffic_classification.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -131,7 +153,7 @@ const AiInsights = () => {
           </h2>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
-              <ReBarChart data={barData}>
+              <ReBarChart data={stats?.weekly_trends}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#ffffff05" vertical={false} />
                 <XAxis dataKey="name" stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="#6b7280" fontSize={12} tickLine={false} axisLine={false} />
@@ -152,7 +174,7 @@ const AiInsights = () => {
         <h2 className="text-lg font-semibold mb-6">Model Event Logs</h2>
         <div className="space-y-4">
           {[
-            { time: '2026-05-06 11:20:05', event: 'Incremental Retraining Complete', status: 'SUCCESS' },
+            { time: stats?.last_retrained, event: 'Incremental Retraining Complete', status: 'SUCCESS' },
             { time: '2026-05-06 09:15:30', event: 'High Anomaly Cluster Detected', status: 'ALERT' },
             { time: '2026-05-06 04:00:00', event: 'Model Checkpoint Saved', status: 'INFO' },
           ].map((log, i) => (

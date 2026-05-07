@@ -17,7 +17,10 @@ public class SecurityEventController {
     private final SecurityEventRepository eventRepository;
 
     @GetMapping
-    public ResponseEntity<List<SecurityEvent>> getAllEvents() {
+    public ResponseEntity<List<SecurityEvent>> getAllEvents(@RequestParam(required = false) String severity) {
+        if (severity != null && !severity.isEmpty()) {
+            return ResponseEntity.ok(eventRepository.findBySeverity(severity));
+        }
         return ResponseEntity.ok(eventRepository.findAll());
     }
 

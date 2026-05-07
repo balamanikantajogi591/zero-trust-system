@@ -4,7 +4,8 @@
     "numReplicas": 1,
     "sleepOnIdle": false,
     "restartPolicyType": "ON_FAILURE",
-    "healthCheckPath": "/",
+    "healthCheckPath": "/health",
+
     "healthCheckTimeout": 600,
     "serviceName": "zero-trust-system"
   }

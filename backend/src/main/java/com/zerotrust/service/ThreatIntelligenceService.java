@@ -15,7 +15,7 @@ public class ThreatIntelligenceService {
     private final NotificationService notificationService;
     private final AuditLogService auditLogService;
 
-    @Value("${application.ml-service.url:http://ml-service:8000}")
+    @Value("${application.ml-service.url:http://localhost:8000}")
     private String mlServiceUrl;
 
     public int predictRisk(String userId, Map<String, Object> activityData) {

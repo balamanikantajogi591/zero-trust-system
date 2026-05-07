@@ -77,6 +77,31 @@ async def train_model():
 def health_check():
     return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
+@app.get("/stats")
+def get_model_stats():
+    # In a real app, these would be calculated from model performance
+    return {
+        "accuracy": 0.984,
+        "contamination": 0.1,
+        "false_positive_rate": 0.012,
+        "model_version": "Isolation Forest v2.4",
+        "last_retrained": datetime.now().isoformat(),
+        "traffic_classification": [
+            {"name": "Normal", "value": 850, "color": "#10b981"},
+            {"name": "Anomalous", "value": 120, "color": "#f43f5e"},
+            {"name": "Suspicious", "value": 30, "color": "#f59e0b"}
+        ],
+        "weekly_trends": [
+            {"name": "Mon", "risk": 45, "traffic": 120},
+            {"name": "Tue", "risk": 32, "traffic": 150},
+            {"name": "Wed", "risk": 78, "traffic": 180},
+            {"name": "Thu", "risk": 55, "traffic": 140},
+            {"name": "Fri", "risk": 90, "traffic": 210},
+            {"name": "Sat", "risk": 25, "traffic": 90},
+            {"name": "Sun", "risk": 15, "traffic": 70}
+        ]
+    }
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", 8000))

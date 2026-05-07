@@ -50,4 +50,9 @@ export const dlpApi = {
   getStats: () => api.get('/dlp/stats'),
 };
 
+export const aiApi = {
+  getStats: () => api.get('/ai/stats'),
+  trainModel: () => api.post('/ai/train'),
+};
+
 export default api;

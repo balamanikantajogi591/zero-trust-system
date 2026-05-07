@@ -23,6 +23,18 @@ public class UserController {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
+    @PutMapping("/{id}/role")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<User> updateUserRole(@PathVariable String id, @RequestBody java.util.Map<String, String> request) {
+        String roleStr = request.get("role");
+        return userRepository.findById(id)
+                .map(user -> {
+                    user.setRole(com.zerotrust.model.Role.valueOf(roleStr));
+                    return ResponseEntity.ok(userRepository.save(user));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {

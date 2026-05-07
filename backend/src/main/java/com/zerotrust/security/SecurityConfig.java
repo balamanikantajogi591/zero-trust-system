@@ -26,7 +26,7 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/v1/auth/**")
+                        req.requestMatchers("/api/v1/auth/**", "/", "/index.html", "/static/**", "/assets/**", "/*.js", "/*.css", "/*.png", "/*.ico", "/*.svg", "/*.json")
                                 .permitAll()
                                 .requestMatchers("/api/v1/users/**").hasAuthority("ADMIN")
                                 .anyRequest()
