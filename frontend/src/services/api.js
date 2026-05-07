@@ -45,4 +45,9 @@ export const eventApi = {
   resolveEvent: (id) => api.post(`/events/${id}/resolve`),
 };
 
+export const dlpApi = {
+  getLogs: () => api.get('/dlp/logs'),
+  getStats: () => api.get('/dlp/stats'),
+};
+
 export default api;

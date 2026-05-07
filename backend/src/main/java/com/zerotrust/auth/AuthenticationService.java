@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +17,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final com.zerotrust.service.ThreatIntelligenceService threatIntelligenceService;
 
     public AuthenticationResponse register(RegisterRequest request) {
         var user = User.builder()
@@ -43,6 +45,21 @@ public class AuthenticationService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+
+        // Zero Trust Adaptive Check
+        int riskScore = threatIntelligenceService.predictRisk(user.getEmail(), Map.of(
+            "hour_of_day", java.time.LocalTime.now().getHour(),
+            "login_frequency", 1.0, // This should be calculated from history
+            "data_download_size", 0.0,
+            "device_reputation", 1.0
+        ));
+
+        if (riskScore > 80) {
+            throw new com.zerotrust.exception.AdaptiveAuthenticationException(
+                "Access Denied: AI Security Engine detected a high-risk login anomaly (Score: " + riskScore + ")"
+            );
+        }
+
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         return AuthenticationResponse.builder()

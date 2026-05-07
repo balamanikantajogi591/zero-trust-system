@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   Bell, 
@@ -10,15 +10,38 @@ import {
   CheckCheck,
   Smartphone
 } from 'lucide-react';
-
-const alerts = [
-  { id: 1, type: 'CRITICAL', title: 'High Risk Anomaly Detected', message: 'User bob.smith@corp.com triggered multiple security violations in short succession.', time: '2 mins ago', read: false },
-  { id: 2, type: 'WARNING', title: 'New Device Login', message: 'A login attempt from an unrecognized device (MacBook Pro, New York) was detected for your account.', time: '1 hour ago', read: false },
-  { id: 3, type: 'INFO', title: 'Weekly Report Ready', message: 'Your automated security analytics report for the last 7 days is now available for download.', time: '5 hours ago', read: true },
-  { id: 4, type: 'SUCCESS', title: 'System Patch Applied', message: 'The AI Anomaly Detection model has been successfully updated to v2.4.1.', time: '1 day ago', read: true },
-];
+import { eventApi } from '../services/api';
 
 const Notifications = () => {
+  const [events, setEvents] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEvents();
+  }, []);
+
+  const fetchEvents = async () => {
+    try {
+      const response = await eventApi.getEvents();
+      // Map security events to alert structure
+      const mappedEvents = response.data.map(event => ({
+        id: event.id,
+        type: event.severity === 'CRITICAL' ? 'CRITICAL' : 
+              event.severity === 'HIGH' ? 'WARNING' : 
+              event.type === 'LOGIN' ? 'INFO' : 'SUCCESS',
+        title: event.type.replace('_', ' '),
+        message: event.message,
+        time: new Date(event.timestamp).toLocaleTimeString(),
+        read: event.status === 'RESOLVED',
+        userId: event.userId
+      }));
+      setEvents(mappedEvents.sort((a, b) => b.id - a.id));
+    } catch (err) {
+      console.error("Failed to fetch events", err);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="p-8 space-y-8 max-w-4xl mx-auto">
       <div className="flex justify-between items-end">
@@ -39,7 +62,7 @@ const Notifications = () => {
       </div>
 
       <div className="space-y-4">
-        {alerts.map((alert) => (
+        {events.length > 0 ? events.map((alert) => (
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,7 +88,7 @@ const Notifications = () => {
               <div className="flex-1">
                 <div className="flex justify-between items-start mb-1">
                   <h3 className={`font-bold ${alert.read ? 'text-gray-400' : 'text-white'}`}>
-                    {alert.title}
+                    {alert.title} <span className="text-[10px] font-normal text-gray-500 ml-2">ID: {alert.userId}</span>
                   </h3>
                   <span className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
                     <Clock className="w-3 h-3" />
@@ -89,7 +112,11 @@ const Notifications = () => {
               <span className="absolute top-4 right-4 w-2 h-2 bg-accent rounded-full"></span>
             )}
           </motion.div>
-        ))}
+        )) : (
+          <div className="text-center py-20 text-gray-600">
+            {loading ? "Syncing with Zero Trust Engine..." : "No recent security events found."}
+          </div>
+        )}
       </div>
 
       <div className="pt-8 text-center">

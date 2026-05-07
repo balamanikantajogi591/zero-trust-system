@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { 
   FileLock2, 
@@ -10,16 +10,32 @@ import {
   Database,
   Lock
 } from 'lucide-react';
-
-const dlpLogs = [
-  { id: 1, user: 'bob.smith@corp.com', resource: 'Financial_Report_Q1.xlsx', pattern: 'Email/PII', action: 'MASKED', timestamp: '2026-05-06 11:45:12' },
-  { id: 2, user: 'alice.jones@corp.com', resource: 'Customer_Export.csv', pattern: 'Phone/PII', action: 'BLOCKED', timestamp: '2026-05-06 10:22:05' },
-  { id: 3, user: 'charlie.d@corp.com', resource: 'Project_Alpha_Spec.pdf', pattern: 'Gov ID', action: 'MASKED', timestamp: '2026-05-06 09:30:44' },
-  { id: 4, user: 'diana.r@corp.com', resource: 'Employee_Payroll.json', pattern: 'SSN/PII', action: 'MASKED', timestamp: '2026-05-06 08:15:30' },
-];
+import { dlpApi } from '../services/api';
 
 const DlpManagement = () => {
   const [showSensitive, setShowSensitive] = useState({});
+  const [logs, setLogs] = useState([]);
+  const [stats, setStats] = useState({ inspectedObjects: 0, maskedPatterns: 0, blockedTransfers: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDlpData();
+  }, []);
+
+  const fetchDlpData = async () => {
+    try {
+      const [logsRes, statsRes] = await Promise.all([
+        dlpApi.getLogs(),
+        dlpApi.getStats()
+      ]);
+      setLogs(logsRes.data);
+      setStats(statsRes.data);
+    } catch (err) {
+      console.error("Failed to fetch DLP data", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const toggleSensitive = (id) => {
     setShowSensitive(prev => ({ ...prev, [id]: !prev[id] }));
@@ -51,7 +67,7 @@ const DlpManagement = () => {
           </div>
           <div>
             <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Inspected Objects</p>
-            <p className="text-2xl font-bold">12,482</p>
+            <p className="text-2xl font-bold">{stats.inspectedObjects.toLocaleString()}</p>
           </div>
         </div>
         <div className="glass-card p-6 flex items-center gap-6">
@@ -60,7 +76,7 @@ const DlpManagement = () => {
           </div>
           <div>
             <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Masked Patterns</p>
-            <p className="text-2xl font-bold">452</p>
+            <p className="text-2xl font-bold">{stats.maskedPatterns}</p>
           </div>
         </div>
         <div className="glass-card p-6 flex items-center gap-6">
@@ -69,7 +85,7 @@ const DlpManagement = () => {
           </div>
           <div>
             <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Blocked Transfers</p>
-            <p className="text-2xl font-bold">18</p>
+            <p className="text-2xl font-bold">{stats.blockedTransfers}</p>
           </div>
         </div>
       </div>
@@ -99,23 +115,23 @@ const DlpManagement = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5">
-              {dlpLogs.map((log) => (
+              {logs.length > 0 ? logs.map((log) => (
                 <tr key={log.id} className="hover:bg-white/5 transition-all group">
                   <td className="px-6 py-4">
                     <div>
-                      <p className="text-sm font-medium">{log.user}</p>
-                      <p className="text-xs text-gray-500 font-mono">{log.resource}</p>
+                      <p className="text-sm font-medium">{log.userId}</p>
+                      <p className="text-xs text-gray-500 font-mono truncate max-w-[200px]">{log.message}</p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 rounded-lg bg-primary/10 text-primary text-[10px] font-bold border border-primary/20">
-                      {log.pattern}
+                      {log.type === 'DLP_MASKED' ? 'PII Detected' : log.type}
                     </span>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`flex items-center gap-1.5 text-xs font-bold ${log.action === 'MASKED' ? 'text-secondary' : 'text-accent'}`}>
-                      {log.action === 'MASKED' ? <ShieldCheck className="w-3 h-3" /> : <ShieldAlert className="w-3 h-3" />}
-                      {log.action}
+                    <span className="flex items-center gap-1.5 text-xs font-bold text-secondary">
+                      <ShieldCheck className="w-3 h-3" />
+                      MASKED
                     </span>
                   </td>
                   <td className="px-6 py-4">
@@ -132,10 +148,18 @@ const DlpManagement = () => {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className="text-[10px] font-mono text-gray-500">{log.timestamp}</span>
+                    <span className="text-[10px] font-mono text-gray-500">
+                      {new Date(log.timestamp).toLocaleString()}
+                    </span>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan="5" className="px-6 py-8 text-center text-gray-500 text-sm">
+                    {loading ? "Initializing DLP Engine..." : "No sensitive data incidents detected yet."}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
