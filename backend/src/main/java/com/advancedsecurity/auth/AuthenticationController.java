@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.auth;
+package com.advancedsecurity.auth;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

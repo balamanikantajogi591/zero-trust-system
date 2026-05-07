@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.auth;
+package com.advancedsecurity.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

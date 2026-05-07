@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.config;
+package com.advancedsecurity.config;
 
 import com.advancedsecurity.model.Role;
 import com.advancedsecurity.model.User;

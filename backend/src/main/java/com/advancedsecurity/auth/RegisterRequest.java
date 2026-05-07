@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.auth;
+package com.advancedsecurity.auth;
 
 import com.advancedsecurity.model.Role;
 import lombok.AllArgsConstructor;

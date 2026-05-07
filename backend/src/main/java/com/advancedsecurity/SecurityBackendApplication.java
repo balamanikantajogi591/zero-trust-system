@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity;
+package com.advancedsecurity;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

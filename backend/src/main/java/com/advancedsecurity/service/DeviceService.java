@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.service;
+package com.advancedsecurity.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;

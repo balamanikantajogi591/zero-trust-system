@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.repository;
+package com.advancedsecurity.repository;
 
 import com.advancedsecurity.model.AuditLog;
 import org.springframework.data.jpa.repository.JpaRepository;

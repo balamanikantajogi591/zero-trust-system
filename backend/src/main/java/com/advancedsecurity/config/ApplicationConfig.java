@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.config;
+package com.advancedsecurity.config;
 
 import com.advancedsecurity.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

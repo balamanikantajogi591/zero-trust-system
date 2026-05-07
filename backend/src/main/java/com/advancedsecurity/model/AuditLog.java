@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.model;
+package com.advancedsecurity.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

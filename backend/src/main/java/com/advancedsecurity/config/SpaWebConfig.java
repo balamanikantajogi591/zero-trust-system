@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.config;
+package com.advancedsecurity.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;

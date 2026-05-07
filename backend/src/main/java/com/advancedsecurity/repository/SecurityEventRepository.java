@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.repository;
+package com.advancedsecurity.repository;
 
 import com.advancedsecurity.model.SecurityEvent;
 import org.springframework.data.jpa.repository.JpaRepository;

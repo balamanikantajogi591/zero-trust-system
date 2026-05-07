@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.service;
+package com.advancedsecurity.service;
 
 import com.advancedsecurity.model.SecurityEvent;
 import com.advancedsecurity.repository.SecurityEventRepository;

@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.security;
+package com.advancedsecurity.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

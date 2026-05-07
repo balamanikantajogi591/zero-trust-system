@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.model;
+package com.advancedsecurity.model;
 
 public enum Role {
     USER,

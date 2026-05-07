@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.controller;
+package com.advancedsecurity.controller;
 
 import com.advancedsecurity.model.User;
 import com.advancedsecurity.repository.UserRepository;

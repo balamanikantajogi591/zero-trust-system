@@ -1,4 +1,4 @@
-﻿package com.advancedsecurity.exception;
+package com.advancedsecurity.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
