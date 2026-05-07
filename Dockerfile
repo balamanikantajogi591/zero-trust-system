@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy built backend JAR from the backend module's target folder
-COPY --from=build /app/backend/target/*.jar app.jar
+COPY --from=build /app/backend/target/security-backend.jar app.jar
 
 # Install ML requirements
 COPY ml-service/requirements.txt /app/ml-service/requirements.txt
