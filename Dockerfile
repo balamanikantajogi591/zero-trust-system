@@ -7,7 +7,7 @@ COPY . .
 
 # Build the entire system (Frontend, Backend, and ML dependencies)
 # frontend-maven-plugin will handle the React build automatically
-RUN mvn clean install -DskipTests -B
+RUN mvn clean install -DskipTests -DskipML=true -B
 
 # Stage 2: Runtime
 FROM eclipse-temurin:17-jre-focal

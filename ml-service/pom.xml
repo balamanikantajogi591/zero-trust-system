@@ -16,6 +16,10 @@
 
     <name>Zero Trust System - ML Service</name>
 
+    <properties>
+        <skipML>false</skipML>
+    </properties>
+
     <build>
         <plugins>
             <plugin>
@@ -30,12 +34,10 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>powershell.exe</executable>
+                            <skip>${skipML}</skip>
+                            <executable>python</executable>
                             <arguments>
-                                <argument>-ExecutionPolicy</argument>
-                                <argument>Bypass</argument>
-                                <argument>-File</argument>
-                                <argument>setup_env.ps1</argument>
+                                <argument>setup_env.py</argument>
                             </arguments>
                         </configuration>
                     </execution>
