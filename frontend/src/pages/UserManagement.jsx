@@ -7,7 +7,7 @@ import {
 import { userApi } from '../services/api';
 import { useToast } from '../components/Toast';
 
-const ROLES = ['ADMIN', 'ANALYST', 'USER', 'VIEWER'];
+const ROLES = ['ADMIN', 'ANALYST', 'USER'];
 
 const SkeletonRow = () => (
   <tr className="animate-pulse">

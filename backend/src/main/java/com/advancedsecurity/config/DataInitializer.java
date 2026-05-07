@@ -61,7 +61,7 @@ public class DataInitializer implements CommandLineRunner {
         Object[][] demoUsers = {
             {"Alice", "Johnson", "alice.johnson@securecorp.com", "ANALYST", "Active", 22},
             {"Bob", "Smith", "bob.smith@securecorp.com", "USER", "Active", 45},
-            {"Carol", "Davis", "carol.davis@securecorp.com", "VIEWER", "Active", 10},
+            {"Carol", "Davis", "carol.davis@securecorp.com", "USER", "Active", 10},
             {"Dave", "Wilson", "dave.wilson@securecorp.com", "USER", "Suspended", 88},
             {"Eve", "Martinez", "eve.martinez@securecorp.com", "ANALYST", "Active", 31},
         };
