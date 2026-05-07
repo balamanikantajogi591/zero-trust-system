@@ -208,29 +208,36 @@ const LoginPage = ({ onLoginSuccess }) => {
             </form>
 
             <div className="my-6">
-              <GoogleLogin
-                onSuccess={async (credentialResponse) => {
-                  const decoded = jwtDecode(credentialResponse.credential);
-                  const isAdmin = decoded.email === 'balamanikantajogi591@gmail.com';
-                  const userData = { 
-                    role: isAdmin ? 'ADMIN' : 'USER', 
-                    email: decoded.email,
-                    name: decoded.name,
-                    picture: decoded.picture,
-                    token: credentialResponse.credential 
-                  };
-                  localStorage.setItem('user', JSON.stringify(userData));
-                  localStorage.setItem('token', credentialResponse.credential);
-                  onLoginSuccess(userData);
-                }}
-                onError={() => {
-                  setError('Google Authentication Failed');
-                }}
-                theme="filled_black"
-                shape="pill"
-                text="continue_with"
-                width="100%"
-              />
+              {import.meta.env.VITE_GOOGLE_CLIENT_ID ? (
+                <GoogleLogin
+                  onSuccess={async (credentialResponse) => {
+                    const decoded = jwtDecode(credentialResponse.credential);
+                    const isAdmin = decoded.email === 'balamanikantajogi591@gmail.com';
+                    const userData = { 
+                      role: isAdmin ? 'ADMIN' : 'USER', 
+                      email: decoded.email,
+                      name: decoded.name,
+                      picture: decoded.picture,
+                      token: credentialResponse.credential 
+                    };
+                    localStorage.setItem('user', JSON.stringify(userData));
+                    localStorage.setItem('token', credentialResponse.credential);
+                    onLoginSuccess(userData);
+                  }}
+                  onError={() => {
+                    setError('Google Authentication Failed');
+                  }}
+                  theme="filled_black"
+                  shape="pill"
+                  text="continue_with"
+                  width="100%"
+                />
+              ) : (
+                <div className="text-center text-xs text-gray-500 bg-white/5 p-4 rounded-xl border border-white/10 shadow-glow">
+                  <p className="font-bold text-white mb-1">Google SSO Disabled</p>
+                  <p>Set <code className="text-primary bg-primary/10 px-1 rounded">VITE_GOOGLE_CLIENT_ID</code> in Railway variables to enable.</p>
+                </div>
+              )}
             </div>
           </>
         )}

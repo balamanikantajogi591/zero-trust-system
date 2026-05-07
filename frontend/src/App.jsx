@@ -53,8 +53,10 @@ function App() {
     return () => notificationService.disconnect();
   }, [user]);
 
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || "missing-client-id";
+
   return (
-    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID_HERE.apps.googleusercontent.com">
+    <GoogleOAuthProvider clientId={googleClientId}>
       <Router>
         <AnimatePresence>
           {toast && (
