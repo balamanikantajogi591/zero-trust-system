@@ -26,7 +26,7 @@ const Sidebar = ({ user }) => {
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 
-  const filteredItems = menuItems.filter(item => !item.adminOnly || user.role === 'ADMIN');
+  const filteredItems = menuItems;
 
   return (
     <div className="w-64 h-screen bg-card border-r border-white/5 flex flex-col fixed left-0 top-0 z-50">

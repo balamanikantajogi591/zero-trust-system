@@ -18,13 +18,13 @@ public class UserController {
     private final UserRepository userRepository;
 
     @GetMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     public ResponseEntity<List<User>> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
     }
 
     @PutMapping("/{id}/role")
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     public ResponseEntity<User> updateUserRole(@PathVariable String id, @RequestBody java.util.Map<String, String> request) {
         String roleStr = request.get("role");
         return userRepository.findById(id)
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     public ResponseEntity<Void> deleteUser(@PathVariable String id) {
         userRepository.deleteById(id);
         return ResponseEntity.noContent().build();

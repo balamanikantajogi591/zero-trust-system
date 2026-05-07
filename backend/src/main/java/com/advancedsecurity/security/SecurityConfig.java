@@ -27,11 +27,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/v1/auth/**", "/ws-alerts/**", "/", "/index.html", "/static/**", "/assets/**", "/*.js", "/*.css", "/*.png", "/*.ico", "/*.svg", "/*.json")
-                                .permitAll()
-                                .requestMatchers("/api/v1/users/**").hasAuthority("ADMIN")
-                                .anyRequest()
-                                .authenticated()
+                        req.anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

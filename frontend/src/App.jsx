@@ -109,7 +109,7 @@ function App() {
                   <main className="ml-64 min-h-[calc(100vh-64px)] transition-all">
                     <Routes>
                       <Route path="/dashboard" element={<Dashboard />} />
-                      {user.role === 'ADMIN' && <Route path="/users" element={<UserManagement />} />}
+                      <Route path="/users" element={<UserManagement />} />
                       <Route path="/threats" element={<ThreatDetection />} />
                       <Route path="/ai-insights" element={<AiInsights />} />
                       <Route path="/dlp" element={<DlpManagement />} />

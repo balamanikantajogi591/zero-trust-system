@@ -21,7 +21,7 @@ public class AiController {
     private String mlServiceUrl;
 
     @GetMapping("/stats")
-    @PreAuthorize("hasAuthority('ADMIN') or hasAuthority('ANALYST')")
+
     public ResponseEntity<Map<String, Object>> getAiStats() {
         try {
             Map<String, Object> stats = restTemplate.getForObject(mlServiceUrl + "/stats", Map.class);
@@ -32,7 +32,7 @@ public class AiController {
     }
 
     @PostMapping("/train")
-    @PreAuthorize("hasAuthority('ADMIN')")
+
     public ResponseEntity<Map<String, Object>> trainModel() {
         try {
             Map<String, Object> response = restTemplate.postForObject(mlServiceUrl + "/train", null, Map.class);
