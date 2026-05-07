@@ -10,7 +10,7 @@ const Sidebar = ({ user, collapsed, onToggle }) => {
 
   const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: Users, label: 'Users', path: '/users' },
+    { icon: Users, label: 'Users', path: '/users', adminOnly: true },
     { icon: ShieldAlert, label: 'Threats', path: '/threats' },
     { icon: BrainCircuit, label: 'AI Insights', path: '/ai-insights' },
     { icon: FileLock2, label: 'Data Protection', path: '/dlp' },
@@ -19,6 +19,9 @@ const Sidebar = ({ user, collapsed, onToggle }) => {
     { icon: Bell, label: 'Notifications', path: '/notifications' },
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];
+
+  const filteredMenuItems = menuItems.filter(item => !item.adminOnly || user?.role === 'ADMIN');
+
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -57,7 +60,7 @@ const Sidebar = ({ user, collapsed, onToggle }) => {
 
         {/* Nav Items */}
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {menuItems.map((item) => (
+          {filteredMenuItems.map((item) => (
             <NavLink
               key={item.path}
               to={item.path}

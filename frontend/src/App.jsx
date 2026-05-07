@@ -115,10 +115,11 @@ function App() {
               </ProtectedRoute>
             } />
             <Route path="/users" element={
-              <ProtectedRoute>
+              <ProtectedRoute adminOnly={true}>
                 <AdminLayout><UserManagement /></AdminLayout>
               </ProtectedRoute>
             } />
+
             <Route path="/threats" element={
               <ProtectedRoute>
                 <AdminLayout><ThreatDetection /></AdminLayout>
